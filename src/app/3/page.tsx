@@ -242,9 +242,9 @@ export default function AdPage() {
                 </div>
             </div>
             <div ref={textContentRef} className="text-white">
-                <h2 className="text-4xl font-bold mb-4 text-primary uppercase">Endless Ads</h2>
+                <h2 className="text-4xl font-bold mb-4 text-primary uppercase">ENDLESS ADS</h2>
                 <p className="text-lg text-slate-300">
-                    The viewing experience is often fragmented by advertisements. This animation shows a common scenario where an unskippable ad plays before the content. While ads support creators, their implementation can sometimes feel intrusive, breaking the immersion and testing the viewer's patience, especially when a countdown is the only thing standing between you and your video.
+                    This animation shows a common scenario where an unskippable ad plays before the content, fragmenting the viewing experience.
                 </p>
             </div>
         </div>
