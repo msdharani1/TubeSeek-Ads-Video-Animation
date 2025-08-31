@@ -13,8 +13,9 @@ export default function SolutionPage() {
   const textContentRef = useRef<HTMLDivElement>(null);
   const logoRef = useRef<HTMLDivElement>(null);
 
-  const thumbnails = [
-    "https://img.youtube.com/vi/XqZsoesa55w/maxresdefault.jpg", "https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg", "https://img.youtube.com/vi/RgKAFK5djSk/maxresdefault.jpg", "https://img.youtube.com/vi/OPf0YbXqDm0/maxresdefault.jpg", "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg", "https://img.youtube.com/vi/ekr2nIex040/maxresdefault.jpg", "https://img.youtube.com/vi/kPa7bsKwL-c/maxresdefault.jpg", "https://img.youtube.com/vi/DyDfgMOUjCI/maxresdefault.jpg", "https://img.youtube.com/vi/4NRXx6U8ABQ/maxresdefault.jpg"
+  const chaoticWords = [
+    "Trending Now", "Viral Video", "Must Watch", "Clickbait", "Sponsored", "You Won't Believe This",
+    "Top 10", "Shocking", "Reacts To", "Algorithm", "Ad", "Subscribe", "Like", "Comment", "Endless Scroll"
   ];
 
   useEffect(() => {
@@ -29,21 +30,32 @@ export default function SolutionPage() {
     gsap.set(cleanScreenRef.current, { opacity: 0, scale: 1.1 });
     gsap.set(logoRef.current, { opacity: 0, scale: 0.5 });
     
-    // Add chaotic thumbnails
+    // Add chaotic text elements
     if (chaoticScreenRef.current) {
-        thumbnails.forEach((url, i) => {
-            const thumb = document.createElement('img');
-            thumb.src = url;
-            thumb.className = 'chaotic-thumb';
-            gsap.set(thumb, {
+        chaoticScreenRef.current.innerHTML = ''; // Clear previous elements
+        for (let i = 0; i < 20; i++) {
+            const word = document.createElement('div');
+            word.className = 'chaotic-word';
+            word.textContent = chaoticWords[Math.floor(Math.random() * chaoticWords.length)];
+            chaoticScreenRef.current.appendChild(word);
+
+            gsap.set(word, {
                 position: 'absolute',
-                left: `${Math.random() * 85}%`,
-                top: `${Math.random() * 85}%`,
-                width: `${Math.random() * 20 + 20}%`,
-                rotation: Math.random() * 60 - 30,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                fontSize: `${Math.random() * 16 + 8}px`,
+                color: `hsla(0, 0%, 100%, ${Math.random() * 0.5 + 0.2})`,
             });
-            chaoticScreenRef.current?.appendChild(thumb);
-        });
+            
+            gsap.to(word, {
+                x: Math.random() * 200 - 100,
+                y: Math.random() * 200 - 100,
+                duration: Math.random() * 10 + 5,
+                repeat: -1,
+                yoyo: true,
+                ease: 'sine.inOut'
+            });
+        }
     }
 
     // Animation sequence
@@ -66,17 +78,18 @@ export default function SolutionPage() {
         opacity: 0,
         scale: 0.5,
         duration: 0.8,
-        stagger: 0.05,
-        ease: 'back.out(2)'
+        stagger: 0.02,
+        ease: 'power2.out'
     }, "-=0.5")
 
     // Transition from chaos to clean
     .to(chaoticScreenRef.current?.children || [], {
         opacity: 0,
+        filter: 'blur(10px)',
         scale: 0,
-        duration: 0.6,
-        stagger: 0.03,
-        ease: 'power2.in',
+        duration: 0.8,
+        stagger: 0.02,
+        ease: 'power3.in',
     }, ">2")
     .to(screenRef.current, {
         backgroundColor: 'var(--clean-bg)',
@@ -157,10 +170,9 @@ export default function SolutionPage() {
             width: 100%;
             height: 100%;
         }
-        .chaotic-thumb {
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255,255,255,0.1);
+        .chaotic-word {
+            font-family: monospace;
+            will-change: transform;
         }
         .clean-screen {
             display: flex;
