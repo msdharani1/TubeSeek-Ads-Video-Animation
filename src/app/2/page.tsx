@@ -538,7 +538,7 @@ export default function EnhancedAnimationPage() {
             left: 10%;
             width: 80%;
             opacity: 0;
-            z-index: 20;
+            z-index: 50;
         }
         .ad-text {
             background: var(--ad-yellow);
