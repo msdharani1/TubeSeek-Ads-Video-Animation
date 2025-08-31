@@ -157,7 +157,7 @@ export default function EnhancedAnimationPage() {
              shortsReelRef.current?.appendChild(item);
         });
     })
-    .to(shortsReelRef.current, { y: `-${4 * 100}%`, duration: 5, ease: "power1.inOut" })
+    .to(shortsReelRef.current, { y: `-${4 * 100}%`, duration: 10, ease: "power1.inOut" })
 
     // Reset for next loop
     .to(containerRef.current, {
