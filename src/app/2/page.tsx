@@ -534,11 +534,11 @@ export default function EnhancedAnimationPage() {
         
         .ad-overlay {
             position: absolute;
-            bottom: 45px;
+            bottom: 60px;
             left: 10%;
             width: 80%;
             opacity: 0;
-            z-index: 50;
+            z-index: 100;
         }
         .ad-text {
             background: var(--ad-yellow);
