@@ -21,12 +21,12 @@ export default function Home() {
         <Scene />
       </main>
       <div className="absolute top-1/2 left-0 w-full -translate-y-1/2 z-50 overflow-hidden whitespace-nowrap bg-primary/80 py-4">
-        <div className="inline-block animate-marquee">
+        <div className="inline-block animate-marquee-rtl">
           <p className="text-4xl text-center font-bold text-primary-foreground/90 px-8">
             "These days YouTube can feel overwhelming"
           </p>
         </div>
-        <div className="inline-block animate-marquee">
+        <div className="inline-block animate-marquee-rtl">
           <p className="text-4xl text-center font-bold text-primary-foreground/90 px-8">
             "These days YouTube can feel overwhelming"
           </p>

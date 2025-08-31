@@ -11,7 +11,7 @@ export default {
     extend: {
       fontFamily: {
         body: ['Literata', 'serif'],
-        headline: ['Literata', 'serif'],
+        headline: ['"Dancing Script"', 'cursive'],
         display: ['"Dancing Script"', 'cursive'],
         code: ['monospace'],
       },
@@ -98,15 +98,19 @@ export default {
         'pulse-glow': {
           '0%, 100%': {
             opacity: '1',
-            boxShadow: '0 0 12px rgba(200, 200, 200, 0.7)',
+            boxShadow: '0 0 12px hsl(var(--primary) / 0.7)',
           },
           '50%': {
             opacity: '0.9',
-            boxShadow: '0 0 24px rgba(200, 200, 200, 1)',
+            boxShadow: '0 0 24px hsl(var(--primary) / 1)',
           },
         },
         'marquee': {
           '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+        'marquee-rtl': {
+          '0%': { transform: 'translateX(100%)' },
           '100%': { transform: 'translateX(-100%)' },
         },
       },
@@ -116,6 +120,7 @@ export default {
         'shake': 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
         'pulse-glow': 'pulse-glow 3s infinite ease-in-out',
         'marquee': 'marquee 20s linear infinite',
+        'marquee-rtl': 'marquee-rtl 10s linear infinite',
       },
     },
   },
