@@ -166,6 +166,12 @@ export default function AutoplayPage() {
       .recommendations-list {
           padding: 10px;
           overflow-y: auto;
+          scrollbar-width: none; /* Firefox */
+          -ms-overflow-style: none;  /* Internet Explorer 10+ */
+      }
+      .recommendations-list::-webkit-scrollbar { /* WebKit */
+          width: 0;
+          height: 0;
       }
       .recommendation-item {
           display: flex;
@@ -180,17 +186,18 @@ export default function AutoplayPage() {
       }
       .video-info {
           margin-left: 10px;
+          flex-grow: 1;
       }
       .title-placeholder {
           height: 14px;
-          width: 120px;
+          width: 90%;
           background: #475569;
           border-radius: 4px;
           margin-bottom: 8px;
       }
       .channel-placeholder {
           height: 10px;
-          width: 80px;
+          width: 60%;
           background: #64748b;
           border-radius: 4px;
       }
@@ -261,8 +268,8 @@ export default function AutoplayPage() {
                                 <div key={title} className="recommendation-item">
                                     <div className="thumbnail"></div>
                                     <div className="video-info">
-                                        <div className="title-placeholder" style={{width: `${60 + Math.random() * 30}%`}}></div>
-                                        <div className="channel-placeholder" style={{width: `${40 + Math.random() * 20}%`}}></div>
+                                        <div className="title-placeholder"></div>
+                                        <div className="channel-placeholder"></div>
                                     </div>
                                 </div>
                             ))}
@@ -279,5 +286,3 @@ export default function AutoplayPage() {
     </>
   );
 }
-
-    
