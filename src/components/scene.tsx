@@ -4,29 +4,20 @@ import React, { FC, useEffect, useState } from "react";
 import { Play } from "lucide-react";
 
 const thumbnails = [
-  "XqZsoesa55w", "kJQP7kiw5Fk", "JGwWNGJdvx8", "RgKAFK5djSk", "OPf0YbXqDm0",
-  "9bZkp7q19f0", "ekr2nIex040", "kPa7bsKwL-c", "DyDfgMOUjCI", "4NRXx6U8ABQ",
-  "Pkh8UtuejGw", "b1kbLWvqugk", "H5v3kku4y6Q", "UTHLKHL_whs", "G7KNmW9a75Y",
-  "mVKuCbjFfIY", "KqFNbCcyFkk", "ck4RGeoHFko", "2W_VnvjeWK4", "OUS9mM8Xbbw",
-  "xuCn8ux2gbs", "jHbyQ_AQP8c", "1lm1RzxI7vY", "tR7fDH5hdlY", "3WPsaWAKh8c",
-  "QiWMnF3n03Y", "8t4L-vm8cKo", "EB-C9J_DdEA", "M6t47RI4bns", "Sje_626T4bA",
-  "dQw4w9WgXcQ", "XHTrLYShBRQ", "LXb3EKWsInQ", "rib47coDWm8", "Ok4BqC5TO_c",
-  "Pt-W2JHnqac", "gDjMZvYWUdo", "K0-GxoJ_Pcg", "GoW8Tf7hTGA", "hOfRN0KihOU",
-  "e-P5IFTqB98", "QRt7LjqJ45k", "4lAGzNNELfE", "5xRiJICmF0U", "ysw0Slf9nj8",
-  "kBu9nAOlRRE", "JfVOs4VSpmA", "TcMBFSGVi1c", "g4U4BQW9OEk", "mqqft2x_Aa4"
-].map(id => ({
-  id,
+  "https://img.youtube.com/vi/XqZsoesa55w/maxresdefault.jpg", "https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg", "https://img.youtube.com/vi/RgKAFK5djSk/maxresdefault.jpg", "https://img.youtube.com/vi/OPf0YbXqDm0/maxresdefault.jpg", "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg", "https://img.youtube.com/vi/ekr2nIex040/maxresdefault.jpg", "https://img.youtube.com/vi/kPa7bsKwL-c/maxresdefault.jpg", "https://img.youtube.com/vi/DyDfgMOUjCI/maxresdefault.jpg", "https://img.youtube.com/vi/4NRXx6U8ABQ/maxresdefault.jpg", "https://img.youtube.com/vi/Pkh8UtuejGw/maxresdefault.jpg", "https://img.youtube.com/vi/H5v3kku4y6Q/maxresdefault.jpg", "https://img.youtube.com/vi/G7KNmW9a75Y/maxresdefault.jpg", "https://img.youtube.com/vi/mVKuCbjFfIY/maxresdefault.jpg", "https://img.youtube.com/vi/KqFNbCcyFkk/maxresdefault.jpg", "https://img.youtube.com/vi/ck4RGeoHFko/maxresdefault.jpg", "https://img.youtube.com/vi/OUS9mM8Xbbw/maxresdefault.jpg", "https://img.youtube.com/vi/xuCn8ux2gbs/maxresdefault.jpg", "https://img.youtube.com/vi/jHbyQ_AQP8c/maxresdefault.jpg", "https://img.youtube.com/vi/M6t47RI4bns/maxresdefault.jpg", "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg", "https://img.youtube.com/vi/LXb3EKWsInQ/maxresdefault.jpg", "https://img.youtube.com/vi/gDjMZvYWUdo/maxresdefault.jpg", "https://img.youtube.com/vi/K0-GxoJ_Pcg/maxresdefault.jpg", "https://img.youtube.com/vi/GoW8Tf7hTGA/maxresdefault.jpg", "https://img.youtube.com/vi/e-P5IFTqB98/maxresdefault.jpg", "https://img.youtube.com/vi/QRt7LjqJ45k/maxresdefault.jpg", "https://img.youtube.com/vi/4lAGzNNELfE/maxresdefault.jpg", "https://img.youtube.com/vi/5xRiJICmF0U/maxresdefault.jpg", "https://img.youtube.com/vi/JfVOs4VSpmA/maxresdefault.jpg", "https://img.youtube.com/vi/TcMBFSGVi1c/maxresdefault.jpg", "https://img.youtube.com/vi/g4U4BQW9OEk/maxresdefault.jpg", "https://img.youtube.com/vi/mqqft2x_Aa4/maxresdefault.jpg", "https://img.youtube.com/vi/lI_o7yhH5-o/maxresdefault.jpg", "https://img.youtube.com/vi/U0SBPdDtqpA/maxresdefault.jpg", "https://img.youtube.com/vi/Eyl4sQFkQiM/maxresdefault.jpg", "https://img.youtube.com/vi/CrhuPQeNp7c/maxresdefault.jpg", "https://img.youtube.com/vi/vW0UWP7C1I8/maxresdefault.jpg", "https://img.youtube.com/vi/Llss1aRo8tw/maxresdefault.jpg", "https://img.youtube.com/vi/o9LMsBAhwkk/maxresdefault.jpg", "https://img.youtube.com/vi/wSCKINuweRM/maxresdefault.jpg", "https://img.youtube.com/vi/nFNUwwdo7vs/maxresdefault.jpg"
+].map(url => ({
+  url,
   width: 320 + Math.floor(Math.random() * 80) - 40,
   height: 180 + Math.floor(Math.random() * 45) - 22,
 }));
 
 
 const VideoThumbnail: FC<{
-  videoId: string;
+  imageUrl: string;
   width: number;
   height: number;
   className?: string;
-}> = ({ videoId, width, height, className }) => {
+}> = ({ imageUrl, width, height, className }) => {
   return (
     <div
       className={`group relative cursor-pointer overflow-hidden rounded-md bg-card shadow-lg ${className}`}
@@ -36,7 +27,7 @@ const VideoThumbnail: FC<{
       }}
     >
       <img
-        src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
+        src={imageUrl}
         alt="Video thumbnail"
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
@@ -92,7 +83,7 @@ export default function Scene() {
       <div className="absolute inset-0 z-0">
         {Array.from({ length: numThumbnails }).map((_, i) => (
           <FloatingElement key={`thumb-${i}`} index={i}>
-            <VideoThumbnail videoId={thumbnails[i % thumbnails.length].id} width={thumbnails[i % thumbnails.length].width} height={thumbnails[i % thumbnails.length].height} />
+            <VideoThumbnail imageUrl={thumbnails[i % thumbnails.length].url} width={thumbnails[i % thumbnails.length].width} height={thumbnails[i % thumbnails.length].height} />
           </FloatingElement>
         ))}
       </div>
