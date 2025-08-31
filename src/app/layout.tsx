@@ -3,8 +3,8 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'TubeSeek 2d Video',
-  description: 'An interactive 2D scene with day/night cycles and AI-generated soundscapes.',
+  title: 'Overwhelming YouTube',
+  description: 'An interactive scene about the overwhelming feeling of YouTube.',
 };
 
 export default function RootLayout({
