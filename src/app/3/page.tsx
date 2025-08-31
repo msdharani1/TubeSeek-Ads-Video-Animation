@@ -1,90 +1,113 @@
 
 "use client";
 
-import { useEffect, useRef } from 'react';
-import { gsap } from 'gsap';
-import { TextPlugin } from 'gsap/TextPlugin';
-
-gsap.registerPlugin(TextPlugin);
+import React, { useEffect, useRef } from 'react';
 
 const videoTitles = [
   "How to cook the perfect steak",
-  "DIY Home Decor Ideas",
+  "DIY Home Decor Ideas", 
   "10-Minute Morning Workout",
   "Travel Guide to Japan"
 ];
 
-const VideoItem = ({ title }: { title: string }) => (
-    <div className="video-item">
-        <div className="video-thumbnail"></div>
-        <div className="video-info">
-            <span className="text-sm text-gray-300 block font-medium">{title}</span>
-            <div className="channel-name"></div>
-        </div>
+interface VideoItemProps {
+  title: string;
+}
+
+const VideoItem: React.FC<VideoItemProps> = ({ title }) => (
+  <div className="video-item flex items-center p-3 bg-gradient-to-br from-slate-700 to-slate-600 rounded-lg mb-2 border border-slate-500">
+    <div className="video-thumbnail w-24 h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-md"></div>
+    <div className="video-info ml-3">
+      <span className="text-sm text-gray-300 font-medium">{title}</span>
+      <div className="channel-name h-2 bg-gradient-to-r from-slate-400 to-slate-500 rounded mt-1 w-1/2"></div>
     </div>
+  </div>
 );
 
-
-export default function AdAnimationPage() {
+const AdAnimationPage: React.FC = () => {
   const phoneContainerRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const appScreenRef = useRef<HTMLDivElement>(null);
   const videoPlayerRef = useRef<HTMLDivElement>(null);
   const adOverlayRef = useRef<HTMLDivElement>(null);
-
-  const animationRunning = useRef(false);
+  const progressBarFillRef = useRef<HTMLDivElement>(null);
+  const animationRunning = useRef<boolean>(false);
 
   const resetAnimation = () => {
-    gsap.set(videoPlayerRef.current, { opacity: 0 });
-    gsap.set(adOverlayRef.current, { opacity: 0 });
+    if (videoPlayerRef.current) videoPlayerRef.current.style.opacity = '0';
+    if (adOverlayRef.current) adOverlayRef.current.style.opacity = '0';
+    if (progressBarFillRef.current) progressBarFillRef.current.style.width = '0%';
     screenRef.current?.classList.remove('on');
     appScreenRef.current?.classList.remove('active');
     animationRunning.current = false;
   };
 
-  const playAnimation = () => {
+  const animateElement = (element: HTMLElement | null, properties: Record<string, string>, duration: number = 0.5, delay: number = 0) => {
+    if (!element) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      setTimeout(() => {
+        Object.assign(element.style, properties);
+        element.style.transition = `all ${duration}s ease`;
+        setTimeout(resolve, duration * 1000);
+      }, delay * 1000);
+    });
+  };
+
+  const handleSkipAd = () => {
+    if (adOverlayRef.current) {
+      adOverlayRef.current.style.opacity = '0';
+    }
+    animateElement(videoPlayerRef.current, { opacity: '0' }, 0.4, 0).then(() => {
+      setTimeout(() => {
+        animationRunning.current = false;
+        playAnimation();
+      }, 1000);
+    });
+  };
+
+  const playAnimation = async () => {
     if (animationRunning.current) return;
     animationRunning.current = true;
 
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setTimeout(playAnimation, 2000); // Loop animation
-      },
-      onStart: resetAnimation
-    });
+    resetAnimation();
 
-    tl.set(phoneContainerRef.current, { rotationY: -30, scale: 0.7 });
-    tl.to(phoneContainerRef.current, {
-      opacity: 1,
-      scale: 1,
-      rotationY: 0,
-      duration: 1,
-      ease: "back.out(1.7)"
-    }, 0.2);
+    if (phoneContainerRef.current) {
+      phoneContainerRef.current.style.transform = 'rotateY(-30deg) scale(0.7)';
+      phoneContainerRef.current.style.opacity = '0';
+      await animateElement(phoneContainerRef.current, {
+        opacity: '1',
+        transform: 'rotateY(0deg) scale(1)'
+      }, 1, 0.2);
+    }
 
-    tl.to(screenRef.current, {
-      backgroundColor: 'var(--screen-on)',
-      duration: 0.5,
-      ease: "power2.inOut"
-    }, ">-0.3");
+    if (screenRef.current) {
+      screenRef.current.classList.add('on');
+    }
 
-    tl.to(appScreenRef.current, { opacity: 1, duration: 0.4 }, ">");
+    await animateElement(appScreenRef.current, { opacity: '1' }, 0.4, 0.3);
+    await animateElement(videoPlayerRef.current, { opacity: '1' }, 0.4, 0);
     
-    tl.to(videoPlayerRef.current, {
-      opacity: 1,
-      duration: 0.4,
-      ease: "power2.inOut",
-    }, ">");
+    if (adOverlayRef.current) {
+      await animateElement(adOverlayRef.current, { opacity: '1' }, 0.2, 0.5);
+    }
+    
+    if (progressBarFillRef.current) {
+      progressBarFillRef.current.style.transition = 'width 4s linear';
+      progressBarFillRef.current.style.width = '100%';
+    }
 
-    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.1");
-    tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { 
-      width: '100%', 
-      duration: 4, 
-      ease: 'linear'
-    });
-    tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
+    await new Promise(resolve => setTimeout(resolve, 4000));
 
-    tl.to(videoPlayerRef.current, { opacity: 0, duration: 0.4, ease: "power2.in" }, ">1");
+    if (adOverlayRef.current && adOverlayRef.current.style.opacity === '1') {
+      await animateElement(adOverlayRef.current, { opacity: '0' }, 0.2, 0);
+    }
+
+    await animateElement(videoPlayerRef.current, { opacity: '0' }, 0.4, 1);
+
+    setTimeout(() => {
+      animationRunning.current = false;
+      playAnimation();
+    }, 2000);
   };
 
   useEffect(() => {
@@ -97,193 +120,164 @@ export default function AdAnimationPage() {
     <>
       <style jsx global>{`
         :root {
-            --bg-color: #020817;
-            --phone-color: #0d0d0d;
-            --screen-off: #0d0d0d;
-            --screen-on: #f0f8ff;
-            --logo-primary: #e74c3c;
-            --logo-secondary: #c0392b;
-            --app-bg: #020817;
-            --app-text: #f0f8ff;
-            --ad-yellow: #fbbd23;
+          --phone-color: #0d0d0d;
+          --screen-off: #0d0d0d;
+          --screen-on: #f0f8ff;
+          --ad-yellow: #fbbd23;
         }
 
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center; 
-            min-height: 100vh;
-            overflow: hidden;
+          font-family: 'Inter', sans-serif;
         }
 
         .phone-container {
-            transform: scale(0.7);
-            opacity: 0;
-            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+          transform: scale(0.7);
+          opacity: 0;
+          filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
         }
 
         .phone {
-            width: 300px;
-            height: 600px;
-            background: linear-gradient(145deg, #1a1a1a, var(--phone-color));
-            border-radius: 40px;
-            border: 3px solid #333;
-            box-shadow: 
-                0 30px 60px -12px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
+          width: 300px;
+          height: 600px;
+          background: linear-gradient(145deg, #1a1a1a, var(--phone-color));
+          border-radius: 40px;
+          border: 3px solid #333;
+          box-shadow: 
+            0 30px 60px -12px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+          position: relative;
+          overflow: hidden;
         }
 
         .phone::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 15px;
-            background: #222;
-            border-radius: 10px;
-            z-index: 10;
+          content: '';
+          position: absolute;
+          top: 15px;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 80px;
+          height: 15px;
+          background: #222;
+          border-radius: 10px;
+          z-index: 10;
         }
 
         .screen {
-            width: calc(100% - 16px);
-            height: calc(100% - 22px);
-            background-color: var(--screen-off);
-            border-radius: 35px;
-            position: absolute;
-            top: 11px;
-            left: 8px;
-            overflow: hidden;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+          width: calc(100% - 16px);
+          height: calc(100% - 22px);
+          background-color: var(--screen-off);
+          border-radius: 35px;
+          position: absolute;
+          top: 11px;
+          left: 8px;
+          overflow: hidden;
+          box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+          transition: background-color 0.5s ease;
         }
 
         .screen.on {
-            background-color: var(--screen-on);
+          background-color: var(--screen-on);
         }
 
         .app-screen {
-            background: linear-gradient(180deg, var(--app-bg) 0%, #0f172a 100%);
-            opacity: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            position: relative;
+          background: linear-gradient(180deg, #020817, #0f172a);
+          opacity: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          position: relative;
         }
         
         .video-player {
-            width: 100%;
-            height: 180px; /* Adjust height for video player */
-            background: linear-gradient(180deg, #000, #1a1a1a);
-            position: relative;
-            top: 0;
-            left: 0;
-            opacity: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: #fff;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            flex-shrink: 0;
+          width: 100%;
+          height: 180px;
+          background: linear-gradient(180deg, #000, #1a1a1a);
+          position: relative;
+          top: 0;
+          left: 0;
+          opacity: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-direction: column;
+          color: #fff;
+          padding: 20px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+          flex-shrink: 0;
+          overflow: visible;
         }
         
         .ad-overlay {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            width: calc(100% - 20px);
-            opacity: 0;
-            z-index: 9999;
-        }
-        .ad-text {
-            background: var(--ad-yellow);
-            color: #000;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-block;
-            margin-bottom: 4px;
-        }
-        .ad-progress-bar {
-            width: 100%;
-            height: 3px;
-            background-color: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            overflow: hidden;
-            border: 1px solid var(--ad-yellow);
-        }
-        .ad-progress-bar-fill {
-            width: 0%;
-            height: 100%;
-            background-color: var(--ad-yellow);
-        }
-
-        .recommendations {
-            padding: 15px;
-            overflow-y: auto;
-            flex-grow: 1;
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .recommendations::-webkit-scrollbar {
-            display: none;
-        }
-
-        .video-item {
-            width: 100%;
-            background: linear-gradient(145deg, #1e293b, #334155);
-            border-radius: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #475569;
-        }
-
-        .video-thumbnail {
-            width: 100px;
-            height: 56px;
-            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
-            border-radius: 8px;
-            flex-shrink: 0;
+          position: absolute;
+          bottom: 10px;
+          left: 10px;
+          right: 10px;
+          opacity: 0;
+          z-index: 1000;
+          background: rgba(0, 0, 0, 0.8);
+          border-radius: 6px;
+          padding: 10px;
+          pointer-events: auto;
         }
         
-        .video-info {
-            flex-grow: 1;
-            margin-left: 12px;
+        .ad-text {
+          background: var(--ad-yellow);
+          color: #000;
+          padding: 6px 12px;
+          border-radius: 4px;
+          font-size: 13px;
+          font-weight: 700;
+          display: inline-block;
+          margin-bottom: 8px;
+          cursor: pointer;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+          border: 1px solid #f59e0b;
+        }
+        
+        .ad-progress-bar {
+          width: 100%;
+          height: 5px;
+          background-color: rgba(255, 255, 255, 0.4);
+          border-radius: 3px;
+          overflow: hidden;
+          border: 1px solid var(--ad-yellow);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+        
+        .ad-progress-bar-fill {
+          width: 0%;
+          height: 100%;
+          background-color: var(--ad-yellow);
+          border-radius: 3px;
+          box-shadow: 0 0 8px rgba(251, 189, 35, 0.6);
         }
 
-        .channel-name {
-            height: 8px;
-            background: linear-gradient(90deg, #94a3b8, #64748b);
-            border-radius: 4px;
-            width: 50%;
-            margin-top: 6px;
+        .no-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
-      <div ref={phoneContainerRef} className="phone-container">
-        <div className="phone">
-          <div ref={screenRef} className="screen">
-            <div ref={appScreenRef} className="app-screen">
-              <div ref={videoPlayerRef} className="video-player">
-                <h3 className="text-lg font-bold mb-4 text-center">Video Playing...</h3>
-                 <div ref={adOverlayRef} className="ad-overlay">
-                  <div className="ad-text">Skip Ad</div>
-                  <div className="ad-progress-bar">
-                      <div className="ad-progress-bar-fill"></div>
+      <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center overflow-hidden">
+        <div ref={phoneContainerRef} className="phone-container">
+          <div className="phone">
+            <div ref={screenRef} className="screen">
+              <div ref={appScreenRef} className="app-screen">
+                <div ref={videoPlayerRef} className="video-player">
+                  <h3 className="text-lg font-bold mb-4 text-center">Video Playing...</h3>
+                  <div ref={adOverlayRef} className="ad-overlay">
+                    <div className="ad-text" onClick={handleSkipAd}>Skip Ad</div>
+                    <div className="ad-progress-bar">
+                      <div ref={progressBarFillRef} className="ad-progress-bar-fill"></div>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="recommendations">
-                {videoTitles.map(title => <VideoItem key={title} title={title} />)}
+                <div className="recommendations p-4 overflow-y-auto flex-grow no-scrollbar">
+                  {videoTitles.map(title => <VideoItem key={title} title={title} />)}
+                </div>
               </div>
             </div>
           </div>
@@ -291,4 +285,6 @@ export default function AdAnimationPage() {
       </div>
     </>
   );
-}
+};
+
+export default AdAnimationPage;
