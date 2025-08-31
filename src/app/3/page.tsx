@@ -256,7 +256,7 @@ export default function AdPage() {
                 <div className="phone">
                     <div className="screen">
                         <div ref={videoPlayerRef} className="video-player">
-                            <img src="https://www.canity.com/wp-content/uploads/2017/01/Micro-learning-for-Millennial-Minds.gif" alt="Autoplaying video" className="w-full h-full object-cover" />
+                            <img src="https://i.pinimg.com/originals/6e/82/e2/6e82e20e9b013926af71dcfc12bfd88c.gif" alt="Autoplaying video" className="w-full h-full object-cover" />
                              <div ref={adOverlayRef} className="ad-overlay">
                                 <p className="text-sm">Skip Ad</p>
                                 <p className="font-bold text-md">{videoTitles[1]}</p>
@@ -288,5 +288,3 @@ export default function AdPage() {
     </>
   );
 }
-
-  
