@@ -173,17 +173,17 @@ export default function EnhancedAnimationPage() {
       ease: "power2.inOut",
       onStart: () => {
         if (playerTitleRef.current) playerTitleRef.current.textContent = videoTitles[3];
-        gsap.to(videoProgressRef.current, { width: '30%', duration: 1.5, ease: "power1.inOut" });
+        gsap.set(videoProgressRef.current, { width: '0%' });
       }
     }, "<");
 
     // Ad animation
-    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">1.5");
+    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.5");
     tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { width: '100%', duration: 2, ease: 'linear' });
     tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
 
     // Continue video
-    tl.to(videoProgressRef.current, { width: '80%', duration: 1.5, ease: "power1.inOut" });
+    tl.to(videoProgressRef.current, { width: '80%', duration: 3, ease: "power1.inOut" });
 
 
     tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2");
@@ -536,6 +536,7 @@ export default function EnhancedAnimationPage() {
             left: 10%;
             width: 80%;
             opacity: 0;
+            z-index: 20;
         }
         .ad-text {
             background: var(--ad-yellow);
@@ -649,3 +650,5 @@ export default function EnhancedAnimationPage() {
     </>
   );
 }
+
+    
