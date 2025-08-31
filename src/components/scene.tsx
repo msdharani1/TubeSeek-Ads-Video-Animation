@@ -61,18 +61,16 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
   const [initialState, setInitialState] = useState({
     top: '50%',
     left: '50%',
-    scale: 1,
   });
 
-  const animationDuration = 5 + Math.random() * 5; // 5s to 10s
-  const animationDelay = Math.random() * -10; // Start at different times
+  const animationDuration = 2 + Math.random() * 2; // 2s to 4s
+  const animationDelay = Math.random() * 4; // Start at different times
 
   useEffect(() => {
     // This is to avoid hydration errors since initial random values on server and client can differ.
     setInitialState({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
-      scale: 0.5 + Math.random() * 1, // 0.5 to 1.5 scale
     });
   }, []);
 
@@ -82,10 +80,10 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
       style={{
         top: initialState.top,
         left: initialState.left,
-        '--scale-start': initialState.scale,
-        '--scale-end': initialState.scale * (Math.random() > 0.5 ? 1.5 : 0.5),
-        animation: `float-${index % 4} ${animationDuration}s ${animationDelay}s infinite linear`,
-      }}
+        animation: `pop-in-out ${animationDuration}s ${animationDelay}s infinite ease-in-out`,
+        '--z-index-start': Math.floor(Math.random() * 10),
+        '--z-index-end': Math.floor(Math.random() * 20) + 10,
+      } as React.CSSProperties}
     >
       {children}
     </div>
@@ -95,19 +93,6 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
 export default function Scene() {
   const numThumbnails = thumbnails.length * 2;
   
-  const generateKeyframes = (name: string) => {
-    const keyframes: string[] = ['0% { transform: translate(0, 0) rotate(0deg) scale(var(--scale-start)); }'];
-    for (let i = 1; i <= 4; i++) {
-      const x = (Math.random() - 0.5) * 200; // -100 to 100
-      const y = (Math.random() - 0.5) * 200; // -100 to 100
-      const rot = (Math.random() - 0.5) * 720; // -360 to 360
-      const scale = `var(--scale-${i % 2 === 0 ? 'start' : 'end'})`;
-      keyframes.push(`${i * 20}% { transform: translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale}); }`);
-    }
-    keyframes.push('100% { transform: translate(0, 0) rotate(0deg) scale(var(--scale-start)); }');
-    return `@keyframes ${name} { ${keyframes.join(' ')} }`;
-  }
-
   return (
     <div className="relative h-full w-full overflow-hidden">
       <div className="absolute inset-0 z-0">
@@ -118,10 +103,23 @@ export default function Scene() {
         ))}
       </div>
       <style jsx global>{`
-        ${generateKeyframes('float-0')}
-        ${generateKeyframes('float-1')}
-        ${generateKeyframes('float-2')}
-        ${generateKeyframes('float-3')}
+        @keyframes pop-in-out {
+          0% {
+            transform: scale(0);
+            opacity: 0;
+            z-index: var(--z-index-start);
+          }
+          25%, 50% {
+            transform: scale(1);
+            opacity: 1;
+            z-index: var(--z-index-end);
+          }
+          75%, 100% {
+            transform: scale(0);
+            opacity: 0;
+            z-index: var(--z-index-start);
+          }
+        }
       `}</style>
     </div>
   );
