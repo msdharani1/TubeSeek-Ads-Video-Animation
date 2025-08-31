@@ -7,6 +7,24 @@ import { TextPlugin } from 'gsap/TextPlugin';
 
 gsap.registerPlugin(TextPlugin);
 
+const videoTitles = [
+  "How to cook the perfect steak",
+  "DIY Home Decor Ideas",
+  "10-Minute Morning Workout",
+  "Travel Guide to Japan"
+];
+
+const VideoItem = ({ title }: { title: string }) => (
+    <div className="video-item">
+        <div className="video-thumbnail"></div>
+        <div className="video-info">
+            <span className="text-sm text-gray-300 block font-medium">{title}</span>
+            <div className="channel-name"></div>
+        </div>
+    </div>
+);
+
+
 export default function AdAnimationPage() {
   const phoneContainerRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
@@ -17,7 +35,7 @@ export default function AdAnimationPage() {
   const animationRunning = useRef(false);
 
   const resetAnimation = () => {
-    gsap.set(videoPlayerRef.current, { opacity: 0, scaleY: 0, y: 0 });
+    gsap.set(videoPlayerRef.current, { opacity: 0 });
     gsap.set(adOverlayRef.current, { opacity: 0 });
     screenRef.current?.classList.remove('on');
     appScreenRef.current?.classList.remove('active');
@@ -30,8 +48,9 @@ export default function AdAnimationPage() {
 
     const tl = gsap.timeline({
       onComplete: () => {
-        setTimeout(resetAnimation, 2000);
-      }
+        setTimeout(playAnimation, 2000); // Loop animation
+      },
+      onStart: resetAnimation
     });
 
     tl.set(phoneContainerRef.current, { rotationY: -30, scale: 0.7 });
@@ -52,7 +71,6 @@ export default function AdAnimationPage() {
     tl.to(appScreenRef.current, { opacity: 1, duration: 0.4 }, ">");
     
     tl.to(videoPlayerRef.current, {
-      scaleY: 1,
       opacity: 1,
       duration: 0.4,
       ease: "power2.inOut",
@@ -66,7 +84,7 @@ export default function AdAnimationPage() {
     });
     tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
 
-    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">1");
+    tl.to(videoPlayerRef.current, { opacity: 0, duration: 0.4, ease: "power2.in" }, ">1");
   };
 
   useEffect(() => {
@@ -160,13 +178,11 @@ export default function AdAnimationPage() {
         
         .video-player {
             width: 100%;
-            height: 100%;
+            height: 180px; /* Adjust height for video player */
             background: linear-gradient(180deg, #000, #1a1a1a);
-            position: absolute;
+            position: relative;
             top: 0;
             left: 0;
-            transform: scaleY(0);
-            transform-origin: top;
             opacity: 0;
             display: flex;
             justify-content: center;
@@ -175,11 +191,12 @@ export default function AdAnimationPage() {
             color: #fff;
             padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            flex-shrink: 0;
         }
         
         .ad-overlay {
             position: absolute;
-            bottom: 60px;
+            bottom: 20px; /* Position above recommendations */
             left: 10%;
             width: 80%;
             opacity: 0;
@@ -208,19 +225,60 @@ export default function AdAnimationPage() {
             height: 100%;
             background-color: var(--ad-yellow);
         }
+
+        .recommendations {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .video-item {
+            width: 100%;
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid #475569;
+        }
+
+        .video-thumbnail {
+            width: 100px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+        
+        .video-info {
+            flex-grow: 1;
+            margin-left: 12px;
+        }
+
+        .channel-name {
+            height: 8px;
+            background: linear-gradient(90deg, #94a3b8, #64748b);
+            border-radius: 4px;
+            width: 50%;
+            margin-top: 6px;
+        }
       `}</style>
       <div ref={phoneContainerRef} className="phone-container">
         <div className="phone">
           <div ref={screenRef} className="screen">
             <div ref={appScreenRef} className="app-screen">
               <div ref={videoPlayerRef} className="video-player">
-                <h3 className="text-xl font-bold mb-4 text-center">Your Video Title</h3>
+                <h3 className="text-lg font-bold mb-4 text-center">Video Playing...</h3>
                  <div ref={adOverlayRef} className="ad-overlay">
                   <div className="ad-text">Skip Ad</div>
                   <div className="ad-progress-bar">
                       <div className="ad-progress-bar-fill"></div>
                   </div>
                 </div>
+              </div>
+              <div className="recommendations">
+                {videoTitles.map(title => <VideoItem key={title} title={title} />)}
               </div>
             </div>
           </div>
@@ -229,3 +287,5 @@ export default function AdAnimationPage() {
     </>
   );
 }
+
+    
