@@ -93,12 +93,23 @@ export default {
           '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
           '30%, 50%, 70%': { transform: 'translate3d(-3px, 0, 0)' },
           '40%, 60%': { transform: 'translate3d(3px, 0, 0)' },
-        }
+        },
+        'pulse-glow': {
+          '0%, 100%': {
+            opacity: '1',
+            textShadow: '0 0 8px rgba(255, 255, 255, 0.7)',
+          },
+          '50%': {
+            opacity: '0.85',
+            textShadow: '0 0 16px rgba(255, 255, 255, 1)',
+          },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'shake': 'shake 0.82s cubic-bezier(.36,.07,.19,.97) both',
+        'pulse-glow': 'pulse-glow 3s infinite ease-in-out',
       },
     },
   },
