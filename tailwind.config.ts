@@ -12,6 +12,7 @@ export default {
       fontFamily: {
         body: ['Literata', 'serif'],
         headline: ['Literata', 'serif'],
+        display: ['"Dancing Script"', 'cursive'],
         code: ['monospace'],
       },
       colors: {
@@ -97,11 +98,11 @@ export default {
         'pulse-glow': {
           '0%, 100%': {
             opacity: '1',
-            textShadow: '0 0 8px rgba(255, 255, 255, 0.7)',
+            boxShadow: '0 0 12px rgba(200, 200, 200, 0.7)',
           },
           '50%': {
-            opacity: '0.85',
-            textShadow: '0 0 16px rgba(255, 255, 255, 1)',
+            opacity: '0.9',
+            boxShadow: '0 0 24px rgba(200, 200, 200, 1)',
           },
         },
       },
