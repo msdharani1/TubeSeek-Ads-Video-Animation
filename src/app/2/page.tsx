@@ -23,12 +23,21 @@ export default function EnhancedAnimationPage() {
   const adOverlayRef = useRef<HTMLDivElement>(null);
   const shortsViewRef = useRef<HTMLDivElement>(null);
   const shortsReelRef = useRef<HTMLDivElement>(null);
+  const recommendationsRef = useRef<HTMLDivElement>(null);
 
   const videoTitles = [
     "React Hooks Explained",
     "Beginner's Guide to React",
     "State Management in React",
     "Coding a React App"
+  ];
+
+  const recommendationImages = [
+    "https://img.youtube.com/vi/kPa7bsKwL-c/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/ck4RGeoHFko/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/gDjMZvYWUdo/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/mqqft2x_Aa4/maxresdefault.jpg"
   ];
 
   const shortsContent = [
@@ -81,6 +90,7 @@ export default function EnhancedAnimationPage() {
     gsap.set(videoPlayerRef.current, { opacity: 0, scaleY: 0 });
     gsap.set(shortsViewRef.current, { opacity: 0, y: '100%' });
     gsap.set(adOverlayRef.current, { opacity: 0 });
+    gsap.set(recommendationsRef.current, { opacity: 0 });
 
     tl.to(phoneContainerRef.current, {
       opacity: 1,
@@ -129,7 +139,7 @@ export default function EnhancedAnimationPage() {
 
     // Hide results, show video player
     .to(resultsListRef.current, { opacity: 0, y: -20, duration: 0.4 }, ">0.5")
-    .to(videoPlayerRef.current, {
+    .to([videoPlayerRef.current, recommendationsRef.current], {
       scaleY: 1,
       opacity: 1,
       duration: 0.4,
@@ -145,7 +155,7 @@ export default function EnhancedAnimationPage() {
     .to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">")
 
     // Hide video, show shorts
-    .to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2")
+    .to([videoPlayerRef.current, recommendationsRef.current], { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2")
     .to(shortsViewRef.current, { opacity: 1, y: '0%', duration: 0.4 }, "<")
     
     // Populate and scroll shorts
@@ -310,7 +320,6 @@ export default function EnhancedAnimationPage() {
         }
         .video-player {
             width: 100%;
-            height: 100%;
             background: #000;
             position: absolute;
             top: 0;
@@ -407,6 +416,46 @@ export default function EnhancedAnimationPage() {
         .typing-cursor {
             animation: blink 1s infinite;
         }
+        .recommendations-list {
+          padding: 10px;
+          overflow-y: auto;
+          flex-grow: 1;
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+      }
+      .recommendations-list::-webkit-scrollbar {
+          width: 0;
+          height: 0;
+      }
+      .recommendation-item {
+          display: flex;
+          margin-bottom: 10px;
+      }
+      .recommendation-item .thumbnail {
+          width: 120px;
+          height: 70px;
+          background: #334155;
+          border-radius: 8px;
+          flex-shrink: 0;
+          overflow: hidden;
+      }
+      .recommendation-item .video-info {
+          margin-left: 10px;
+          flex-grow: 1;
+      }
+      .recommendation-item .title-placeholder {
+          height: 14px;
+          width: 90%;
+          background: #475569;
+          border-radius: 4px;
+          margin-bottom: 8px;
+      }
+      .recommendation-item .channel-placeholder {
+          height: 10px;
+          width: 60%;
+          background: #64748b;
+          border-radius: 4px;
+      }
         @keyframes blink {
             50% { opacity: 0; }
         }
@@ -454,12 +503,24 @@ export default function EnhancedAnimationPage() {
                     <div ref={videoPlayerRef} className="video-player">
                        <div className="video-player-content">
                          <img src="https://d585tldpucybw.cloudfront.net/sfimages/default-source/default-album/renderstart.gif?sfvrsn=3d8cfee1_1" alt="Coding GIF" className="w-full h-full object-cover"/>
-                         <h3 ref={playerTitleRef} className="video-player-title"></h3>
                          <div ref={adOverlayRef} className="ad-overlay">
                             <div className="ad-text">Ad</div>
                             <div className="ad-progress-bar"><div className="ad-progress-bar-fill"></div></div>
                          </div>
                        </div>
+                       <div ref={recommendationsRef} className="recommendations-list">
+                            {recommendationImages.map((src, index) => (
+                                <div key={index} className="recommendation-item">
+                                    <div className="thumbnail">
+                                      <img src={src} alt={`Recommendation ${index + 1}`} className="w-full h-full object-cover" />
+                                    </div>
+                                    <div className="video-info">
+                                        <div className="title-placeholder"></div>
+                                        <div className="channel-placeholder"></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <div ref={shortsViewRef} className="shorts-container">
                       <div ref={shortsReelRef} className="shorts-reel"></div>
@@ -477,3 +538,5 @@ export default function EnhancedAnimationPage() {
     </>
   );
 }
+
+    
