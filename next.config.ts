@@ -70,6 +70,12 @@ const nextConfig: NextConfig = {
         hostname: 'i.makeagif.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'd585tldpucybw.cloudfront.net',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
