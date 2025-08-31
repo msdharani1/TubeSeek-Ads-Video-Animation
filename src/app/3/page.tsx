@@ -102,7 +102,7 @@ export default function AdPage() {
           --ad-yellow: #fbbd23;
       }
       body {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Poppins', sans-serif;
         background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
       }
       .phone-container {

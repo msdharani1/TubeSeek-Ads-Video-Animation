@@ -10,9 +10,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        body: ['Literata', 'serif'],
-        headline: ['"Dancing Script"', 'cursive'],
-        display: ['"Dancing Script"', 'cursive'],
+        body: ['Poppins', 'sans-serif'],
+        headline: ['Poppins', 'sans-serif'],
+        display: ['Poppins', 'sans-serif'],
         code: ['monospace'],
       },
       colors: {

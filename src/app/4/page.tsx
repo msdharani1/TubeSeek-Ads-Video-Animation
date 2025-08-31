@@ -86,7 +86,7 @@ export default function AutoplayPage() {
   }, []);
 
   const videoTitles = [
-    "React State Management in 2024",
+    "World's Funniest Cat Videos Compilation",
     "World's Funniest Cat Videos Compilation",
     "CSS Grid vs Flexbox",
     "Building a REST API with Node.js",
@@ -112,7 +112,7 @@ export default function AutoplayPage() {
           --logo-secondary: #c0392b;
       }
       body {
-        font-family: 'Inter', sans-serif;
+        font-family: 'Poppins', sans-serif;
         background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
       }
       .phone-container {
