@@ -178,8 +178,22 @@ export default function EnhancedAnimationPage() {
     }, "<");
 
     // Ad animation
-    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.5");
-    tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { width: '100%', duration: 2, ease: 'linear' });
+    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.1");
+    tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { 
+      width: '100%', 
+      duration: 2, 
+      ease: 'linear',
+      onStart: () => {
+        if (videoProgressRef.current) {
+          videoProgressRef.current.style.background = 'var(--ad-yellow)';
+        }
+      },
+      onComplete: () => {
+         if (videoProgressRef.current) {
+          videoProgressRef.current.style.background = '';
+        }
+      }
+    });
     tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
 
     // Continue video
@@ -629,14 +643,14 @@ export default function EnhancedAnimationPage() {
               </div>
               <div ref={videoPlayerRef} id="video-player" className="video-player">
                 <h3 ref={playerTitleRef} id="player-title" className="video-player-title"></h3>
-                <div className="progress-bar">
-                  <div ref={videoProgressRef} id="video-progress" className="progress-fill"></div>
-                </div>
                 <div ref={adOverlayRef} className="ad-overlay">
-                  <div className="ad-text">Ad</div>
+                  <div className="ad-text">Skip Ad</div>
                   <div className="ad-progress-bar">
                       <div className="ad-progress-bar-fill"></div>
                   </div>
+                </div>
+                <div className="progress-bar">
+                  <div ref={videoProgressRef} id="video-progress" className="progress-fill"></div>
                 </div>
               </div>
               <div ref={shortsViewRef} id="shorts-view" className="shorts-container">
