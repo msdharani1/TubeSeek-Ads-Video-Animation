@@ -177,7 +177,6 @@ export default function EnhancedAnimationPage() {
       }
     }, "<");
 
-    // Ad animation
     tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.1");
     tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { 
       width: '100%', 
@@ -196,7 +195,6 @@ export default function EnhancedAnimationPage() {
     });
     tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
 
-    // Continue video
     tl.to(videoProgressRef.current, { width: '80%', duration: 3, ease: "power1.inOut" });
 
 
@@ -248,7 +246,7 @@ export default function EnhancedAnimationPage() {
             background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
             display: flex;
             justify-content: center;
-            align-items: flex-end; /* Align to the bottom */
+            align-items: flex-end; 
             min-height: 100vh;
             overflow: hidden;
             transition: all 1.5s ease-in-out;
@@ -263,7 +261,7 @@ export default function EnhancedAnimationPage() {
             transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             z-index: 20;
             filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
-            margin-bottom: 120px; /* Space for the person's head */
+            margin-bottom: 120px; 
         }
         .phone-container.active {
             transform: scale(1);
