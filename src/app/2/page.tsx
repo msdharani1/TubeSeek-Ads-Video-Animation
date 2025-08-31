@@ -1,63 +1,706 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { Play } from "lucide-react";
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
 
-const video1 = "https://img.youtube.com/vi/XqZsoesa55w/maxresdefault.jpg";
-const video2 = "https://img.youtube.com/vi/kJQP7kiw5Fk/maxresdefault.jpg";
-const adImage = "https://picsum.photos/1024/600?random=3";
+gsap.registerPlugin(TextPlugin);
 
-const scenes = [
-  { type: "video", src: video1, duration: 3000, hint: "video content" },
-  { type: "ad", src: adImage, duration: 2000, hint: "advertisement product" },
-  { type: "video", src: video2, duration: 3000, hint: "nature documentary" },
-];
+export default function EnhancedAnimationPage() {
+  const phoneContainerRef = useRef<HTMLDivElement>(null);
+  const screenRef = useRef<HTMLDivElement>(null);
+  const tubeseekLogoRef = useRef<HTMLDivElement>(null);
+  const appScreenRef = useRef<HTMLDivElement>(null);
+  const searchBarRef = useRef<HTMLDivElement>(null);
+  const searchTextRef = useRef<HTMLSpanElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
+  const resultsListRef = useRef<HTMLDivElement>(null);
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
+  const playerTitleRef = useRef<HTMLHeadingElement>(null);
+  const videoProgressRef = useRef<HTMLDivElement>(null);
+  const shortsViewRef = useRef<HTMLDivElement>(null);
+  const shortsReelRef = useRef<HTMLDivElement>(null);
+  const personHandsRef = useRef<HTMLDivElement>(null);
+  const overwhelmedTextRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLBodyElement | null>(null);
 
-export default function AnimationPage() {
-  const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
+  const animationRunning = useRef(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSceneIndex((prevIndex) => (prevIndex + 1) % scenes.length);
-    }, scenes[currentSceneIndex].duration);
+    bodyRef.current = document.body;
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [currentSceneIndex]);
+  const videoTitles = [
+    "React Hooks Explained in 10 Minutes",
+    "Beginner's Guide to React Components",
+    "State Management with Redux Toolkit",
+    "Building a Portfolio Website with React"
+  ];
 
-  const currentScene = scenes[currentSceneIndex];
+  const shortsTitles = [
+    "Funny Cat Fails Compilation",
+    "Cooking with a Toddler",
+    "Epic Gaming Moments",
+    "Unbelievable Magic Tricks",
+    "My Dog's Life as a King"
+  ];
+
+  const createVideoItem = (title: string, index: number) => {
+    const item = document.createElement('div');
+    item.className = 'video-item';
+    item.setAttribute('data-index', String(index));
+    item.innerHTML = `
+        <div class="video-thumbnail"></div>
+        <div class="video-info">
+            <div class="video-title"></div>
+            <div class="channel-name"></div>
+            <span class="text-sm text-gray-300 mt-2 block font-medium">${title}</span>
+        </div>
+    `;
+    return item;
+  };
+
+  const createShortItem = (title: string, index: number) => {
+    const item = document.createElement('div');
+    item.className = 'short-item';
+    item.style.background = `linear-gradient(${135 + index * 30}deg, var(--logo-primary), var(--logo-secondary))`;
+    item.innerHTML = `
+        <div class="short-item-info">
+            <h4>${title}</h4>
+            <p class="text-sm mt-2 opacity-80">@FunnyTube</p>
+            <p class="text-xs mt-1 opacity-60">${Math.floor(Math.random() * 900 + 100)}K views</p>
+        </div>
+    `;
+    return item;
+  };
+
+  const resetAnimation = () => {
+    gsap.set([videoPlayerRef.current, shortsViewRef.current], { opacity: 0, scaleY: 0, y: 0 });
+    gsap.set(resultsListRef.current, { opacity: 0 });
+    phoneContainerRef.current?.classList.remove('active');
+    screenRef.current?.classList.remove('on');
+    appScreenRef.current?.classList.remove('active');
+    personHandsRef.current?.classList.remove('active');
+    overwhelmedTextRef.current?.classList.remove('active');
+    if (bodyRef.current) {
+        bodyRef.current.style.backgroundColor = 'var(--bg-color)';
+        bodyRef.current.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%)';
+    }
+    if (shortsReelRef.current) shortsReelRef.current.innerHTML = '';
+    if (resultsListRef.current) resultsListRef.current.innerHTML = '';
+    animationRunning.current = false;
+  };
+
+  const playAnimation = () => {
+    if (animationRunning.current) return;
+    animationRunning.current = true;
+
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setTimeout(resetAnimation, 3000);
+      }
+    });
+
+    tl.set(phoneContainerRef.current, { rotationY: -30, scale: 0.7 });
+    tl.to(phoneContainerRef.current, {
+      opacity: 1,
+      scale: 1,
+      rotationY: 0,
+      duration: 1.5,
+      ease: "back.out(1.7)"
+    }, 0.5);
+
+    tl.to(screenRef.current, {
+      backgroundColor: 'var(--screen-on)',
+      duration: 0.8,
+      ease: "power2.inOut"
+    }, ">-0.5");
+
+    tl.to(tubeseekLogoRef.current, {
+      opacity: 1,
+      scale: 1.3,
+      rotation: 360,
+      duration: 0.8,
+      ease: "back.out(1.7)"
+    }, ">");
+
+    tl.to(tubeseekLogoRef.current, {
+      scale: 1.1,
+      duration: 0.2,
+      yoyo: true,
+      repeat: 1
+    }, ">0.5");
+
+    tl.to(tubeseekLogoRef.current, { opacity: 0, scale: 0.8, duration: 0.4 }, ">");
+    tl.to(appScreenRef.current, { opacity: 1, duration: 0.6 }, "<0.2");
+    tl.to(searchBarRef.current, { opacity: 1, y: 0, duration: 0.5 }, "<0.3");
+
+    tl.to(cursorRef.current, { opacity: 1, duration: 0.1 }, ">");
+    const query = "React js tutorial";
+    tl.to(searchTextRef.current, {
+      duration: query.length * 0.08,
+      text: query,
+      ease: "none"
+    });
+    tl.to(cursorRef.current, { opacity: 0, duration: 0.3 }, ">0.5");
+
+    tl.to(searchBarRef.current, { y: -10, opacity: 0.7, duration: 0.4 }, ">");
+
+    videoTitles.forEach((title, index) => {
+      const item = createVideoItem(title, index);
+      resultsListRef.current?.appendChild(item);
+      tl.fromTo(item,
+        { opacity: 0, y: 40, scale: 0.9 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.5,
+          ease: "back.out(1.7)"
+        },
+        ">-0.2"
+      );
+    });
+
+    const fourthVideo = resultsListRef.current?.children[3];
+    if (fourthVideo) {
+        tl.to(fourthVideo, {
+            scale: 1.08,
+            duration: 0.4,
+            ease: "power2.out",
+            onStart: () => fourthVideo.classList.add('selected')
+        }, ">1.5");
+        tl.to(fourthVideo, {
+            scale: 1.05,
+            duration: 0.3
+        }, ">");
+    }
+
+    tl.to(resultsListRef.current, { opacity: 0, y: -30, duration: 0.5 }, ">0.2");
+    tl.to(videoPlayerRef.current, {
+      scaleY: 1,
+      opacity: 1,
+      duration: 0.6,
+      ease: "power2.inOut",
+      onStart: () => {
+        if (playerTitleRef.current) playerTitleRef.current.textContent = videoTitles[3];
+        gsap.to(videoProgressRef.current, { width: '80%', duration: 4, ease: "power1.inOut" });
+      }
+    }, "<");
+
+    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.6, ease: "power2.in" }, ">4");
+    tl.to(shortsViewRef.current, { opacity: 1, duration: 0.6 }, "<0.2");
+    
+    const numShorts = 5;
+    let currentShortIndex = 0;
+    for (let i = 0; i < numShorts; i++) {
+        const short = createShortItem(shortsTitles[i % shortsTitles.length], i);
+        shortsReelRef.current?.appendChild(short);
+        tl.fromTo(short, 
+            { y: "100%", opacity: 0 }, 
+            { y: "0%", opacity: 1, duration: 0.5, ease: "power2.inOut", onComplete: () => {
+                if (currentShortIndex > 0 && shortsReelRef.current) {
+                    gsap.to(shortsReelRef.current.children[currentShortIndex - 1], { y: "-100%", opacity: 0, duration: 0.5, ease: "power2.inOut" });
+                }
+                currentShortIndex++;
+            }}, 
+        `+=${i === 0 ? 0 : 2}`);
+    }
+
+    tl.to(phoneContainerRef.current, {
+      rotation: 3,
+      duration: 0.1,
+      repeat: 20,
+      yoyo: true,
+      ease: "linear"
+    }, ">2");
+    tl.to(personHandsRef.current, { opacity: 1, duration: 0.5 }, "<");
+    tl.to(overwhelmedTextRef.current, { opacity: 1, scale: 1.1, duration: 1 }, "<");
+    tl.to(bodyRef.current, { background: 'var(--overwhelmed-color)', duration: 1 }, "<");
+  };
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      playAnimation();
+    }
+  }, []);
 
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-background p-8">
-      <div className="relative w-[80vw] max-w-[1200px] aspect-video">
-        <div className="relative w-full h-full rounded-xl border-8 border-gray-800 bg-black overflow-hidden shadow-2xl">
-          <div className="relative h-full w-full">
-            <Image
-              src={currentScene.src}
-              alt={currentScene.type}
-              layout="fill"
-              objectFit="cover"
-              data-ai-hint={currentScene.hint}
-              className="transition-opacity duration-500 ease-in-out"
-              key={currentSceneIndex}
-            />
-            {currentScene.type === "ad" && (
-              <div className="absolute bottom-4 right-4 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
-                Ad will end in {scenes[1].duration/1000}s
+    <>
+      <style jsx global>{`
+        :root {
+            --bg-color: #020817;
+            --phone-color: #0d0d0d;
+            --screen-off: #0d0d0d;
+            --screen-on: #f0f8ff;
+            --logo-primary: #e74c3c;
+            --logo-secondary: #c0392b;
+            --app-bg: #020817;
+            --app-text: #f0f8ff;
+            --overwhelmed-color: #c0392b;
+            --hand-color: #fbbf24;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end; /* Align to the bottom */
+            min-height: 100vh;
+            overflow: hidden;
+            transition: all 1.5s ease-in-out;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        .phone-container {
+            transform: scale(0.7);
+            opacity: 0;
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 20;
+            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
+            margin-bottom: 120px; /* Space for the person's head */
+        }
+        .phone-container.active {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .phone {
+            width: 300px;
+            height: 600px;
+            background: linear-gradient(145deg, #1a1a1a, var(--phone-color));
+            border-radius: 40px;
+            border: 3px solid #333;
+            box-shadow: 
+                0 30px 60px -12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phone::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 15px;
+            background: #222;
+            border-radius: 10px;
+            z-index: 10;
+        }
+
+        .screen {
+            width: calc(100% - 16px);
+            height: calc(100% - 22px);
+            background-color: var(--screen-off);
+            border-radius: 35px;
+            position: absolute;
+            top: 11px;
+            left: 8px;
+            overflow: hidden;
+            transition: all 0.8s ease-in;
+            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .screen.on {
+            background-color: var(--screen-on);
+            box-shadow: 
+                inset 0 0 30px rgba(0, 0, 0, 0.1),
+                0 0 50px rgba(138, 43, 226, 0.3);
+        }
+
+        .app-icon {
+            width: 90px;
+            height: 90px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
+        }
+
+        .app-icon.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .app-icon::after {
+            content: '▶';
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .app-screen {
+            background: linear-gradient(180deg, var(--app-bg) 0%, #0f172a 100%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .app-screen.active {
+            opacity: 1;
+        }
+
+        .search-bar {
+            width: calc(100% - 40px);
+            margin: 25px auto 15px;
+            padding: 12px 16px;
+            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
+            border-radius: 25px;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            font-size: 15px;
+            opacity: 0;
+            border: 1px solid #374151;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+        .search-bar::before {
+            content: '🔍';
+            margin-right: 10px;
+            font-size: 18px;
+            filter: grayscale(0.3);
+        }
+        .search-text {
+            white-space: nowrap;
+            overflow: hidden;
+            width: auto;
+            transition: width 0.8s ease;
+            font-weight: 400;
+        }
+
+        .video-item {
+            width: calc(100% - 30px);
+            background: linear-gradient(145deg, #1e293b, #334155);
+            border-radius: 16px;
+            margin: 10px auto;
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            position: relative;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            border: 1px solid #475569;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .video-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(138, 43, 226, 0.2);
+        }
+
+        .video-thumbnail {
+            width: 110px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
+            border-radius: 12px;
+            flex-shrink: 0;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2);
+        }
+        .video-thumbnail::before {
+            content: '▶';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .video-info {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .video-title {
+            height: 14px;
+            background: linear-gradient(90deg, #e2e8f0, #cbd5e1);
+            border-radius: 7px;
+            margin-bottom: 8px;
+            width: 95%;
+        }
+
+        .channel-name {
+            height: 10px;
+            background: linear-gradient(90deg, #94a3b8, #64748b);
+            border-radius: 5px;
+            width: 65%;
+            margin-bottom: 6px;
+        }
+        
+        .video-player {
+            width: 100%;
+            height: 60%;
+            background: linear-gradient(180deg, #000, #1a1a1a);
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: scaleY(0);
+            transform-origin: top;
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: #fff;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        .video-player-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #f0f8ff;
+        }
+
+        .shorts-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            opacity: 0;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            color: #fff;
+            transition: opacity 0.6s ease-in;
+            overflow: hidden;
+        }
+        .shorts-container.active {
+            opacity: 1;
+        }
+        .short-item {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
+            opacity: 0;
+            transform: translateY(100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 25px;
+            box-sizing: border-box;
+        }
+        .short-item-info {
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 15px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .short-item-info h4 {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .person-hands {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            z-index: 15;
+        }
+
+        .person-hands.active {
+            opacity: 1;
+        }
+
+        .person-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 160px;
+            height: 160px;
+            z-index: 10;
+            transition: transform 1.2s ease-in-out;
+        }
+
+        .person-head {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(145deg, #f3e8ff, #e0e7ff);
+            border-radius: 50%;
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .person-torso {
+            width: 160px;
+            height: 80px;
+            background: linear-gradient(145deg, #1f2937, var(--phone-color));
+            border-radius: 80px 80px 0 0;
+            position: absolute;
+            top: 60px;
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .overwhelmed-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 42px;
+            font-weight: 700;
+            color: var(--screen-on);
+            opacity: 0;
+            transition: all 1.5s ease-in-out;
+            pointer-events: none;
+            z-index: 40;
+            text-shadow: 0 4px 20px rgba(240, 248, 255, 0.3);
+            letter-spacing: 2px;
+        }
+        .overwhelmed-text.active {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .progress-bar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--logo-primary), var(--logo-secondary));
+            width: 0%;
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(220, 20, 60, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(220, 20, 60, 0.6); }
+        }
+
+        .selected {
+            animation: pulseGlow 1s ease-in-out;
+            border: 2px solid var(--logo-primary) !important;
+        }
+
+        .typing-cursor {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, var(--logo-primary), var(--logo-secondary));
+            border-radius: 50%;
+            opacity: 0.6;
+        }
+      `}</style>
+      <div className="floating-elements">
+        <div className="floating-element" style={{ top: '10%', left: '20%', animation: 'float 8s ease-in-out infinite' }}></div>
+        <div className="floating-element" style={{ top: '70%', right: '15%', animation: 'float 12s ease-in-out infinite reverse' }}></div>
+        <div className="floating-element" style={{ top: '30%', right: '30%', animation: 'float 10s ease-in-out infinite' }}></div>
+      </div>
+      <div className="person-body">
+        <div className="person-head"></div>
+        <div className="person-torso"></div>
+        <div ref={personHandsRef} id="person-hands" className="person-hands">
+          <svg className="w-full h-full" viewBox="0 0 160 160">
+            <path d="M40 80 C20 60, 15 100, 45 100 Q50 90, 55 95 Q60 85, 65 90 Q70 80, 75 85 Q80 75, 80 80"
+              fill="var(--hand-color)" stroke="#d97706" strokeWidth="1" />
+            <path d="M120 80 C140 60, 145 100, 115 100 Q110 90, 105 95 Q100 85, 95 90 Q90 80, 85 85 Q80 75, 80 80"
+              fill="var(--hand-color)" stroke="#d97706" strokeWidth="1" />
+          </svg>
+        </div>
+      </div>
+      <div ref={overwhelmedTextRef} id="overwhelmed-text" className="overwhelmed-text">Overwhelmed.</div>
+      <div ref={phoneContainerRef} className="phone-container">
+        <div id="phone" className="phone">
+          <div ref={screenRef} id="screen" className="screen">
+            <div ref={tubeseekLogoRef} id="tubeseek-logo" className="app-icon"></div>
+            <div ref={appScreenRef} id="app-screen" className="app-screen">
+              <div ref={searchBarRef} id="search-bar" className="search-bar">
+                <span ref={searchTextRef} id="search-text" className="search-text"></span>
+                <span ref={cursorRef} id="cursor" className="typing-cursor">|</span>
               </div>
-            )}
-             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-                <div className="flex items-center text-white">
-                    <Play className="h-8 w-8 text-white/80 mr-4 cursor-pointer" fill="white" />
-                    <div className="w-full bg-gray-500/50 rounded-full h-1">
-                        <div className="bg-red-600 h-1 rounded-full" style={{width: '30%'}}></div>
-                    </div>
+              <div ref={resultsListRef} id="results-list" className="flex flex-col w-full h-full mt-2 px-2">
+              </div>
+              <div ref={videoPlayerRef} id="video-player" className="video-player">
+                <h3 ref={playerTitleRef} id="player-title" className="video-player-title"></h3>
+                <div className="progress-bar">
+                  <div ref={videoProgressRef} id="video-progress" className="progress-fill"></div>
                 </div>
+              </div>
+              <div ref={shortsViewRef} id="shorts-view" className="shorts-container">
+                <div ref={shortsReelRef} id="shorts-reel" className="relative w-full h-full">
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
+
+    
