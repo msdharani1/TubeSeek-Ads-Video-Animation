@@ -19,6 +19,11 @@ const thumbnails = [
   { width: 400, height: 225, hint: "history" },
   { width: 280, height: 158, hint: "art" },
   { width: 360, height: 203, hint: "comedy" },
+  { width: 320, height: 180, hint: "vlog" },
+  { width: 240, height: 135, hint: "diy" },
+  { width: 400, height: 225, hint: "education" },
+  { width: 280, height: 158, hint: "documentary" },
+  { width: 360, height: 203, hint: "unbox" },
 ];
 
 const VideoThumbnail: FC<{
@@ -53,19 +58,21 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
   children,
   index,
 }) => {
-  const [position, setPosition] = useState({
-    top: `${Math.random() * 100}%`,
-    left: `${Math.random() * 100}%`,
+  const [initialState, setInitialState] = useState({
+    top: '50%',
+    left: '50%',
+    scale: 1,
   });
 
-  const animationDuration = 20 + Math.random() * 20; // 20s to 40s
-  const animationDelay = Math.random() * -40; // Start at different times
+  const animationDuration = 5 + Math.random() * 5; // 5s to 10s
+  const animationDelay = Math.random() * -10; // Start at different times
 
   useEffect(() => {
     // This is to avoid hydration errors since initial random values on server and client can differ.
-    setPosition({
+    setInitialState({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
+      scale: 0.5 + Math.random() * 1, // 0.5 to 1.5 scale
     });
   }, []);
 
@@ -73,9 +80,11 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
     <div
       className="absolute"
       style={{
-        ...position,
-        animation: `float ${animationDuration}s ${animationDelay}s infinite alternate ease-in-out`,
-        transform: `scale(${0.8 + Math.random() * 0.4})`, // 0.8 to 1.2 scale
+        top: initialState.top,
+        left: initialState.left,
+        '--scale-start': initialState.scale,
+        '--scale-end': initialState.scale * (Math.random() > 0.5 ? 1.5 : 0.5),
+        animation: `float-${index % 4} ${animationDuration}s ${animationDelay}s infinite linear`,
       }}
     >
       {children}
@@ -84,36 +93,35 @@ const FloatingElement: FC<{ children: React.ReactNode; index: number }> = ({
 };
 
 export default function Scene() {
+  const numThumbnails = thumbnails.length * 2;
+  
+  const generateKeyframes = (name: string) => {
+    const keyframes: string[] = ['0% { transform: translate(0, 0) rotate(0deg) scale(var(--scale-start)); }'];
+    for (let i = 1; i <= 4; i++) {
+      const x = (Math.random() - 0.5) * 200; // -100 to 100
+      const y = (Math.random() - 0.5) * 200; // -100 to 100
+      const rot = (Math.random() - 0.5) * 720; // -360 to 360
+      const scale = `var(--scale-${i % 2 === 0 ? 'start' : 'end'})`;
+      keyframes.push(`${i * 20}% { transform: translate(${x}px, ${y}px) rotate(${rot}deg) scale(${scale}); }`);
+    }
+    keyframes.push('100% { transform: translate(0, 0) rotate(0deg) scale(var(--scale-start)); }');
+    return `@keyframes ${name} { ${keyframes.join(' ')} }`;
+  }
+
   return (
     <div className="relative h-full w-full overflow-hidden">
-      <div className="absolute inset-0 z-0 opacity-30">
-        {thumbnails.map((thumb, i) => (
-          <FloatingElement key={`bg-${i}`} index={i}>
-            <VideoThumbnail {...thumb} />
-          </FloatingElement>
-        ))}
-      </div>
-      <div className="absolute inset-0 z-10">
-        {thumbnails.map((thumb, i) => (
-          <FloatingElement key={`fg-${i}`} index={i + thumbnails.length}>
-            <VideoThumbnail {...thumb} />
+      <div className="absolute inset-0 z-0">
+        {Array.from({ length: numThumbnails }).map((_, i) => (
+          <FloatingElement key={`thumb-${i}`} index={i}>
+            <VideoThumbnail {...thumbnails[i % thumbnails.length]} />
           </FloatingElement>
         ))}
       </div>
       <style jsx global>{`
-        @keyframes float {
-          0% {
-            transform: translate(0, 0) rotate(0deg) scale(var(--scale-start, 1));
-          }
-          100% {
-            transform: translate(
-                calc(${Math.random() * 200 - 100}vw),
-                calc(${Math.random() * 200 - 100}vh)
-              )
-              rotate(${Math.random() * 720 - 360}deg)
-              scale(var(--scale-end, 1.2));
-          }
-        }
+        ${generateKeyframes('float-0')}
+        ${generateKeyframes('float-1')}
+        ${generateKeyframes('float-2')}
+        ${generateKeyframes('float-3')}
       `}</style>
     </div>
   );
