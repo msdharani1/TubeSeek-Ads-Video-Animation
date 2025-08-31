@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Scene from "@/components/scene";
 
 export default function Home() {
-  const [isNight, setIsNight] = useState(false);
+  const [isNight, setIsNight] = useState(true);
 
   useEffect(() => {
     // Set initial theme based on state
