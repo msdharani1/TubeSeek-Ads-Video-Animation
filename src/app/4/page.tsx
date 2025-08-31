@@ -19,13 +19,6 @@ export default function AutoplayPage() {
   useEffect(() => {
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
 
-    const videoTitles = [
-        "React State Management in 2024",
-        "The Ultimate Guide to Next.js 14",
-        "CSS Grid vs Flexbox",
-        "Building a REST API with Node.js"
-    ];
-
     // Initial setup
     gsap.set(phoneContainerRef.current, { opacity: 0, scale: 0.8, y: 100, rotationY: -45 });
     gsap.set(videoPlayerRef.current, { opacity: 0 });
@@ -96,7 +89,10 @@ export default function AutoplayPage() {
     "React State Management in 2024",
     "The Ultimate Guide to Next.js 14",
     "CSS Grid vs Flexbox",
-    "Building a REST API with Node.js"
+    "Building a REST API with Node.js",
+    "AI in Web Development",
+    "Cybersecurity Fundamentals",
+    "Introduction to Docker"
   ];
 
   return (
@@ -261,7 +257,7 @@ export default function AutoplayPage() {
                             </div>
                         </div>
                         <div ref={recommendationsRef} className="recommendations-list">
-                            {videoTitles.slice(1).map(title => (
+                            {videoTitles.slice(1, 6).map(title => (
                                 <div key={title} className="recommendation-item">
                                     <div className="thumbnail"></div>
                                     <div className="video-info">
@@ -283,3 +279,5 @@ export default function AutoplayPage() {
     </>
   );
 }
+
+    
