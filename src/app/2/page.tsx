@@ -181,17 +181,7 @@ export default function EnhancedAnimationPage() {
     tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { 
       width: '100%', 
       duration: 2, 
-      ease: 'linear',
-      onStart: () => {
-        if (videoProgressRef.current) {
-          videoProgressRef.current.style.background = 'var(--ad-yellow)';
-        }
-      },
-      onComplete: () => {
-         if (videoProgressRef.current) {
-          videoProgressRef.current.style.background = '';
-        }
-      }
+      ease: 'linear'
     });
     tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
 
@@ -662,5 +652,7 @@ export default function EnhancedAnimationPage() {
     </>
   );
 }
+
+    
 
     
