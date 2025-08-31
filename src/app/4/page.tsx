@@ -95,6 +95,14 @@ export default function AutoplayPage() {
     "Introduction to Docker"
   ];
 
+  const recommendationImages = [
+    "https://img.youtube.com/vi/KqFNbCcyFkk/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/Llss1aRo8tw/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/CrhuPQeNp7c/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/wSCKINuweRM/maxresdefault.jpg", 
+    "https://img.youtube.com/vi/9bZkp7q19f0/maxresdefault.jpg"
+  ];
+
   return (
     <>
     <style jsx global>{`
@@ -184,6 +192,7 @@ export default function AutoplayPage() {
           background: #334155;
           border-radius: 8px;
           flex-shrink: 0;
+          overflow: hidden;
       }
       .video-info {
           margin-left: 10px;
@@ -265,9 +274,11 @@ export default function AutoplayPage() {
                             </div>
                         </div>
                         <div ref={recommendationsRef} className="recommendations-list">
-                            {videoTitles.slice(1, 6).map(title => (
-                                <div key={title} className="recommendation-item">
-                                    <div className="thumbnail"></div>
+                            {recommendationImages.map((src, index) => (
+                                <div key={index} className="recommendation-item">
+                                    <div className="thumbnail">
+                                      <img src={src} alt={`Recommendation ${index + 1}`} className="w-full h-full object-cover" />
+                                    </div>
                                     <div className="video-info">
                                         <div className="title-placeholder"></div>
                                         <div className="channel-placeholder"></div>
@@ -287,3 +298,5 @@ export default function AutoplayPage() {
     </>
   );
 }
+
+    
