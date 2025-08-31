@@ -532,11 +532,10 @@ export default function EnhancedAnimationPage() {
           </div>
           <div ref={textContentRef} className="text-white">
             <h2 className="text-4xl font-bold mb-4 text-primary uppercase">ENDLESS SCROLLING AND SHORT-FORM CONTENT</h2>
+            <p className="text-lg text-foreground/80 mt-4">Open YouTube for one video, but distractions quickly take over.</p>
           </div>
         </div>
       </div>
     </>
   );
 }
-
-    
