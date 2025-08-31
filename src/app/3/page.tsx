@@ -9,23 +9,40 @@ export default function AdPage() {
   const videoPlayerRef = useRef<HTMLDivElement>(null);
   const adOverlayRef = useRef<HTMLDivElement>(null);
   const adProgressBarRef = useRef<HTMLDivElement>(null);
+  const adTimerRef = useRef<HTMLSpanElement>(null);
+  const skipButtonRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
+    const tl = gsap.timeline({ 
+      repeat: -1, 
+      repeatDelay: 2,
+      onStart: () => {
+        // Reset button state for each loop
+        if(skipButtonRef.current) {
+          gsap.set(skipButtonRef.current, { opacity: 1, pointerEvents: 'auto' });
+        }
+      }
+    });
+
+    const countdown = { value: 5 };
 
     // Initial setup
-    gsap.set(phoneContainerRef.current, { opacity: 0, scale: 0.8, y: 100 });
+    gsap.set(phoneContainerRef.current, { opacity: 0, scale: 0.8, y: 100, rotationY: -45 });
     gsap.set(videoPlayerRef.current, { opacity: 0 });
     gsap.set(adOverlayRef.current, { opacity: 0 });
     gsap.set(adProgressBarRef.current, { width: '0%' });
+    if (adTimerRef.current) {
+      adTimerRef.current.innerText = "5";
+    }
 
     // Animation sequence
     tl.to(phoneContainerRef.current, {
       opacity: 1,
       scale: 1,
       y: 0,
-      duration: 1,
-      ease: 'power3.out',
+      rotationY: 0,
+      duration: 1.2,
+      ease: 'back.out(1.7)',
     })
     .to(videoPlayerRef.current, {
       opacity: 1,
@@ -37,8 +54,18 @@ export default function AdPage() {
     }, ">")
     .to(adProgressBarRef.current, {
       width: '100%',
-      duration: 4,
+      duration: 5, // Match countdown duration
       ease: 'linear',
+    }, "<")
+    .to(countdown, {
+      value: 0,
+      duration: 5,
+      ease: 'none',
+      onUpdate: () => {
+        if (adTimerRef.current) {
+          adTimerRef.current.innerText = Math.ceil(countdown.value).toString();
+        }
+      }
     }, "<")
     .to(adOverlayRef.current, {
       opacity: 0,
@@ -52,9 +79,26 @@ export default function AdPage() {
         opacity: 0,
         scale: 0.8,
         y: 100,
+        rotationY: 45,
         duration: 1,
         ease: 'power3.in'
     }, ">1");
+
+    const skipAd = () => {
+        gsap.to(skipButtonRef.current, { opacity: 0, pointerEvents: 'none', duration: 0.3 });
+        tl.seek(tl.duration() - 2.5); // Jump towards the end of the animation
+    }
+
+    if (skipButtonRef.current) {
+      skipButtonRef.current.addEventListener('click', skipAd);
+    }
+    
+    return () => {
+      if (skipButtonRef.current) {
+        skipButtonRef.current.removeEventListener('click', skipAd);
+      }
+      tl.kill();
+    }
 
   }, []);
 
@@ -64,6 +108,9 @@ export default function AdPage() {
       body {
         font-family: 'Inter', sans-serif;
         background: linear-gradient(135deg, #020817 0%, #0f172a 100%);
+      }
+      .phone-container {
+        perspective: 1000px;
       }
       .phone {
         width: 300px;
@@ -123,6 +170,12 @@ export default function AdPage() {
         right: 20px;
         z-index: 100;
       }
+      .ad-controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
       .ad-button {
         background-color: #fbbd23;
         color: #1a1a1a;
@@ -133,8 +186,14 @@ export default function AdPage() {
         cursor: pointer;
         border: 1px solid #f59e0b;
         box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-        margin-bottom: 8px;
-        display: inline-block;
+      }
+      .ad-timer {
+        color: #fbbd23;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(0,0,0,0.5);
+        padding: 4px 8px;
+        border-radius: 4px;
       }
       .ad-progress-bar-container {
         width: 100%;
@@ -157,7 +216,10 @@ export default function AdPage() {
           <div className="screen">
             <div ref={videoPlayerRef} className="video-player-background">
                <div ref={adOverlayRef} className="ad-overlay-container">
-                <div className="ad-button">Skip Ad</div>
+                <div className="ad-controls">
+                    <div ref={skipButtonRef} className="ad-button">Skip Ad</div>
+                    <div className="ad-timer">Ad ends in <span ref={adTimerRef}>5</span>s</div>
+                </div>
                 <div className="ad-progress-bar-container">
                   <div ref={adProgressBarRef} className="ad-progress-bar-fill"></div>
                 </div>
