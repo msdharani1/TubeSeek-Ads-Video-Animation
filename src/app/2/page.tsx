@@ -81,12 +81,6 @@ export default function EnhancedAnimationPage() {
     phoneContainerRef.current?.classList.remove('active');
     screenRef.current?.classList.remove('on');
     appScreenRef.current?.classList.remove('active');
-    personHandsRef.current?.classList.remove('active');
-    overwhelmedTextRef.current?.classList.remove('active');
-    if (bodyRef.current) {
-        bodyRef.current.style.backgroundColor = 'var(--bg-color)';
-        bodyRef.current.style.background = 'linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%)';
-    }
     if (shortsReelRef.current) shortsReelRef.current.innerHTML = '';
     if (resultsListRef.current) resultsListRef.current.innerHTML = '';
     animationRunning.current = false;
@@ -98,7 +92,7 @@ export default function EnhancedAnimationPage() {
 
     const tl = gsap.timeline({
       onComplete: () => {
-        setTimeout(resetAnimation, 3000);
+        setTimeout(resetAnimation, 2000);
       }
     });
 
@@ -107,21 +101,21 @@ export default function EnhancedAnimationPage() {
       opacity: 1,
       scale: 1,
       rotationY: 0,
-      duration: 1.5,
+      duration: 1,
       ease: "back.out(1.7)"
-    }, 0.5);
+    }, 0.2);
 
     tl.to(screenRef.current, {
       backgroundColor: 'var(--screen-on)',
-      duration: 0.8,
+      duration: 0.5,
       ease: "power2.inOut"
-    }, ">-0.5");
+    }, ">-0.3");
 
     tl.to(tubeseekLogoRef.current, {
       opacity: 1,
       scale: 1.3,
       rotation: 360,
-      duration: 0.8,
+      duration: 0.5,
       ease: "back.out(1.7)"
     }, ">");
 
@@ -130,67 +124,67 @@ export default function EnhancedAnimationPage() {
       duration: 0.2,
       yoyo: true,
       repeat: 1
-    }, ">0.5");
+    }, ">0.2");
 
-    tl.to(tubeseekLogoRef.current, { opacity: 0, scale: 0.8, duration: 0.4 }, ">");
-    tl.to(appScreenRef.current, { opacity: 1, duration: 0.6 }, "<0.2");
-    tl.to(searchBarRef.current, { opacity: 1, y: 0, duration: 0.5 }, "<0.3");
+    tl.to(tubeseekLogoRef.current, { opacity: 0, scale: 0.8, duration: 0.3 }, ">");
+    tl.to(appScreenRef.current, { opacity: 1, duration: 0.4 }, "<0.1");
+    tl.to(searchBarRef.current, { opacity: 1, y: 0, duration: 0.4 }, "<0.2");
 
     tl.to(cursorRef.current, { opacity: 1, duration: 0.1 }, ">");
     const query = "React js tutorial";
     tl.to(searchTextRef.current, {
-      duration: query.length * 0.08,
+      duration: query.length * 0.05,
       text: query,
       ease: "none"
     });
-    tl.to(cursorRef.current, { opacity: 0, duration: 0.3 }, ">0.5");
+    tl.to(cursorRef.current, { opacity: 0, duration: 0.2 }, ">0.3");
 
-    tl.to(searchBarRef.current, { y: -10, opacity: 0.7, duration: 0.4 }, ">");
+    tl.to(searchBarRef.current, { y: -10, opacity: 0.7, duration: 0.3 }, ">");
 
     videoTitles.forEach((title, index) => {
       const item = createVideoItem(title, index);
       resultsListRef.current?.appendChild(item);
       tl.fromTo(item,
-        { opacity: 0, y: 40, scale: 0.9 },
+        { opacity: 0, y: 30, scale: 0.95 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.5,
+          duration: 0.3,
           ease: "back.out(1.7)"
         },
-        ">-0.2"
+        ">-0.15"
       );
     });
 
     const fourthVideo = resultsListRef.current?.children[3];
     if (fourthVideo) {
         tl.to(fourthVideo, {
-            scale: 1.08,
-            duration: 0.4,
+            scale: 1.05,
+            duration: 0.3,
             ease: "power2.out",
             onStart: () => fourthVideo.classList.add('selected')
-        }, ">1.5");
+        }, ">1");
         tl.to(fourthVideo, {
-            scale: 1.05,
-            duration: 0.3
+            scale: 1.02,
+            duration: 0.2
         }, ">");
     }
 
-    tl.to(resultsListRef.current, { opacity: 0, y: -30, duration: 0.5 }, ">0.2");
+    tl.to(resultsListRef.current, { opacity: 0, y: -20, duration: 0.4 }, ">0.1");
     tl.to(videoPlayerRef.current, {
       scaleY: 1,
       opacity: 1,
-      duration: 0.6,
+      duration: 0.4,
       ease: "power2.inOut",
       onStart: () => {
         if (playerTitleRef.current) playerTitleRef.current.textContent = videoTitles[3];
-        gsap.to(videoProgressRef.current, { width: '80%', duration: 4, ease: "power1.inOut" });
+        gsap.to(videoProgressRef.current, { width: '80%', duration: 3, ease: "power1.inOut" });
       }
     }, "<");
 
-    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.6, ease: "power2.in" }, ">4");
-    tl.to(shortsViewRef.current, { opacity: 1, duration: 0.6 }, "<0.2");
+    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">3");
+    tl.to(shortsViewRef.current, { opacity: 1, duration: 0.4 }, "<0.1");
     
     const numShorts = 5;
     let currentShortIndex = 0;
@@ -199,25 +193,14 @@ export default function EnhancedAnimationPage() {
         shortsReelRef.current?.appendChild(short);
         tl.fromTo(short, 
             { y: "100%", opacity: 0 }, 
-            { y: "0%", opacity: 1, duration: 0.5, ease: "power2.inOut", onComplete: () => {
+            { y: "0%", opacity: 1, duration: 0.4, ease: "power2.inOut", onComplete: () => {
                 if (currentShortIndex > 0 && shortsReelRef.current) {
-                    gsap.to(shortsReelRef.current.children[currentShortIndex - 1], { y: "-100%", opacity: 0, duration: 0.5, ease: "power2.inOut" });
+                    gsap.to(shortsReelRef.current.children[currentShortIndex - 1], { y: "-100%", opacity: 0, duration: 0.4, ease: "power2.inOut" });
                 }
                 currentShortIndex++;
             }}, 
-        `+=${i === 0 ? 0 : 2}`);
+        `+=${i === 0 ? 0 : 1}`);
     }
-
-    tl.to(phoneContainerRef.current, {
-      rotation: 3,
-      duration: 0.1,
-      repeat: 20,
-      yoyo: true,
-      ease: "linear"
-    }, ">2");
-    tl.to(personHandsRef.current, { opacity: 1, duration: 0.5 }, "<");
-    tl.to(overwhelmedTextRef.current, { opacity: 1, scale: 1.1, duration: 1 }, "<");
-    tl.to(bodyRef.current, { background: 'var(--overwhelmed-color)', duration: 1 }, "<");
   };
 
   useEffect(() => {
@@ -673,7 +656,7 @@ export default function EnhancedAnimationPage() {
           </svg>
         </div>
       </div>
-      <div ref={overwhelmedTextRef} id="overwhelmed-text" className="overwhelmed-text">Overwhelmed.</div>
+      <div ref={overwhelmedTextRef} id="overwhelmed-text" className="overwhelmed-text"></div>
       <div ref={phoneContainerRef} className="phone-container">
         <div id="phone" className="phone">
           <div ref={screenRef} id="screen" className="screen">
@@ -702,5 +685,3 @@ export default function EnhancedAnimationPage() {
     </>
   );
 }
-
-    
