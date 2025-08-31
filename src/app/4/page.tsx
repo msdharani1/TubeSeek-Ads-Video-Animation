@@ -87,7 +87,7 @@ export default function AutoplayPage() {
 
   const videoTitles = [
     "React State Management in 2024",
-    "The Ultimate Guide to Next.js 14",
+    "World's Funniest Cat Videos Compilation",
     "CSS Grid vs Flexbox",
     "Building a REST API with Node.js",
     "AI in Web Development",
