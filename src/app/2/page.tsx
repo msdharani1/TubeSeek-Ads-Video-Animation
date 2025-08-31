@@ -21,15 +21,9 @@ export default function EnhancedAnimationPage() {
   const videoProgressRef = useRef<HTMLDivElement>(null);
   const shortsViewRef = useRef<HTMLDivElement>(null);
   const shortsReelRef = useRef<HTMLDivElement>(null);
-  const personHandsRef = useRef<HTMLDivElement>(null);
-  const overwhelmedTextRef = useRef<HTMLDivElement>(null);
-  const bodyRef = useRef<HTMLBodyElement | null>(null);
+  const adOverlayRef = useRef<HTMLDivElement>(null);
 
   const animationRunning = useRef(false);
-
-  useEffect(() => {
-    bodyRef.current = document.body;
-  }, []);
 
   const videoTitles = [
     "React Hooks Explained in 10 Minutes",
@@ -76,7 +70,7 @@ export default function EnhancedAnimationPage() {
   };
 
   const resetAnimation = () => {
-    gsap.set([videoPlayerRef.current, shortsViewRef.current], { opacity: 0, scaleY: 0, y: 0 });
+    gsap.set([videoPlayerRef.current, shortsViewRef.current, adOverlayRef.current], { opacity: 0, scaleY: 0, y: 0 });
     gsap.set(resultsListRef.current, { opacity: 0 });
     phoneContainerRef.current?.classList.remove('active');
     screenRef.current?.classList.remove('on');
@@ -179,11 +173,20 @@ export default function EnhancedAnimationPage() {
       ease: "power2.inOut",
       onStart: () => {
         if (playerTitleRef.current) playerTitleRef.current.textContent = videoTitles[3];
-        gsap.to(videoProgressRef.current, { width: '80%', duration: 3, ease: "power1.inOut" });
+        gsap.to(videoProgressRef.current, { width: '30%', duration: 1.5, ease: "power1.inOut" });
       }
     }, "<");
 
-    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">3");
+    // Ad animation
+    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">1.5");
+    tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { width: '100%', duration: 2, ease: 'linear' });
+    tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
+
+    // Continue video
+    tl.to(videoProgressRef.current, { width: '80%', duration: 1.5, ease: "power1.inOut" });
+
+
+    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2");
     tl.to(shortsViewRef.current, { opacity: 1, duration: 0.4 }, "<0.1");
     
     const numShorts = 5;
@@ -223,6 +226,7 @@ export default function EnhancedAnimationPage() {
             --app-text: #f0f8ff;
             --overwhelmed-color: #c0392b;
             --hand-color: #fbbf24;
+            --ad-yellow: #fbbd23;
         }
 
         body {
@@ -506,75 +510,6 @@ export default function EnhancedAnimationPage() {
             margin-bottom: 5px;
         }
 
-        .person-hands {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 160px;
-            opacity: 0;
-            transition: opacity 1.2s ease-in-out;
-            z-index: 15;
-        }
-
-        .person-hands.active {
-            opacity: 1;
-        }
-
-        .person-body {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 160px;
-            height: 160px;
-            z-index: 10;
-            transition: transform 1.2s ease-in-out;
-        }
-
-        .person-head {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(145deg, #f3e8ff, #e0e7ff);
-            border-radius: 50%;
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .person-torso {
-            width: 160px;
-            height: 80px;
-            background: linear-gradient(145deg, #1f2937, var(--phone-color));
-            border-radius: 80px 80px 0 0;
-            position: absolute;
-            top: 60px;
-            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .overwhelmed-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 42px;
-            font-weight: 700;
-            color: var(--screen-on);
-            opacity: 0;
-            transition: all 1.5s ease-in-out;
-            pointer-events: none;
-            z-index: 40;
-            text-shadow: 0 4px 20px rgba(240, 248, 255, 0.3);
-            letter-spacing: 2px;
-        }
-        .overwhelmed-text.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-
         .progress-bar {
             position: absolute;
             bottom: 20px;
@@ -593,6 +528,37 @@ export default function EnhancedAnimationPage() {
             width: 0%;
             transition: width 0.3s ease;
             border-radius: 2px;
+        }
+        
+        .ad-overlay {
+            position: absolute;
+            bottom: 45px;
+            left: 10%;
+            width: 80%;
+            opacity: 0;
+        }
+        .ad-text {
+            background: var(--ad-yellow);
+            color: #000;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+        .ad-progress-bar {
+            width: 100%;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            border: 1px solid var(--ad-yellow);
+        }
+        .ad-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: var(--ad-yellow);
         }
 
         @keyframes pulseGlow {
@@ -644,19 +610,11 @@ export default function EnhancedAnimationPage() {
         <div className="floating-element" style={{ top: '70%', right: '15%', animation: 'float 12s ease-in-out infinite reverse' }}></div>
         <div className="floating-element" style={{ top: '30%', right: '30%', animation: 'float 10s ease-in-out infinite' }}></div>
       </div>
-      <div className="person-body">
+      <div className="person-body" style={{display: 'none'}}>
         <div className="person-head"></div>
         <div className="person-torso"></div>
-        <div ref={personHandsRef} id="person-hands" className="person-hands">
-          <svg className="w-full h-full" viewBox="0 0 160 160">
-            <path d="M40 80 C20 60, 15 100, 45 100 Q50 90, 55 95 Q60 85, 65 90 Q70 80, 75 85 Q80 75, 80 80"
-              fill="var(--hand-color)" stroke="#d97706" strokeWidth="1" />
-            <path d="M120 80 C140 60, 145 100, 115 100 Q110 90, 105 95 Q100 85, 95 90 Q90 80, 85 85 Q80 75, 80 80"
-              fill="var(--hand-color)" stroke="#d97706" strokeWidth="1" />
-          </svg>
-        </div>
       </div>
-      <div ref={overwhelmedTextRef} id="overwhelmed-text" className="overwhelmed-text"></div>
+      <div id="overwhelmed-text" className="overwhelmed-text" style={{display: 'none'}}></div>
       <div ref={phoneContainerRef} className="phone-container">
         <div id="phone" className="phone">
           <div ref={screenRef} id="screen" className="screen">
@@ -672,6 +630,12 @@ export default function EnhancedAnimationPage() {
                 <h3 ref={playerTitleRef} id="player-title" className="video-player-title"></h3>
                 <div className="progress-bar">
                   <div ref={videoProgressRef} id="video-progress" className="progress-fill"></div>
+                </div>
+                <div ref={adOverlayRef} className="ad-overlay">
+                  <div className="ad-text">Ad</div>
+                  <div className="ad-progress-bar">
+                      <div className="ad-progress-bar-fill"></div>
+                  </div>
                 </div>
               </div>
               <div ref={shortsViewRef} id="shorts-view" className="shorts-container">
