@@ -1,0 +1,242 @@
+
+"use client";
+
+import { useEffect, useRef } from 'react';
+import { gsap } from 'gsap';
+
+export default function AutoplayPage() {
+  const phoneContainerRef = useRef<HTMLDivElement>(null);
+  const videoPlayerRef = useRef<HTMLDivElement>(null);
+  const recommendationsRef = useRef<HTMLDivElement>(null);
+  const nextVideoOverlayRef = useRef<HTMLDivElement>(null);
+  const countdownBarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
+
+    const videoTitles = [
+        "React State Management in 2024",
+        "The Ultimate Guide to Next.js 14",
+        "CSS Grid vs Flexbox",
+        "Building a REST API with Node.js"
+    ];
+
+    // Initial setup
+    gsap.set(phoneContainerRef.current, { opacity: 0, scale: 0.8, y: 100, rotationY: -45 });
+    gsap.set(videoPlayerRef.current, { opacity: 0 });
+    gsap.set(recommendationsRef.current, { opacity: 0 });
+    gsap.set(nextVideoOverlayRef.current, { opacity: 0, y: 20 });
+    gsap.set(countdownBarRef.current, { width: '0%' });
+
+    // Animation sequence
+    tl.to(phoneContainerRef.current, {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      rotationY: 0,
+      duration: 1.2,
+      ease: 'back.out(1.7)',
+    })
+    .to([videoPlayerRef.current, recommendationsRef.current], {
+      opacity: 1,
+      duration: 0.5,
+    }, "-=0.5")
+    .to(nextVideoOverlayRef.current, {
+        opacity: 1,
+        y: 0,
+        duration: 0.5,
+        ease: 'power2.out'
+    }, ">2")
+    .to(countdownBarRef.current, {
+        width: '100%',
+        duration: 5,
+        ease: 'linear'
+    }, "<")
+    .to(nextVideoOverlayRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.3
+    }, ">")
+    .to(videoPlayerRef.current, {
+        scrambleText: {
+            text: videoTitles[1],
+            chars: "abcdefghijklmnopqrstuvwxyz",
+            revealDelay: 0.5
+        }
+    })
+    .to(phoneContainerRef.current, {
+        opacity: 0,
+        scale: 0.8,
+        y: 100,
+        rotationY: 45,
+        duration: 1,
+        ease: 'power3.in'
+    }, ">2");
+    
+    return () => {
+      tl.kill();
+    }
+
+  }, []);
+
+  const videoTitles = [
+    "React State Management in 2024",
+    "The Ultimate Guide to Next.js 14",
+    "CSS Grid vs Flexbox",
+    "Building a REST API with Node.js"
+  ];
+
+  return (
+    <>
+    <style jsx global>{`
+      body {
+        font-family: 'Inter', sans-serif;
+        background: linear-gradient(135deg, #020817 0%, #0f172a 100%);
+      }
+      .phone-container {
+        perspective: 1000px;
+      }
+      .phone {
+        width: 300px;
+        height: 600px;
+        background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+        border-radius: 40px;
+        border: 3px solid #333;
+        box-shadow: 
+          0 30px 60px -12px rgba(0, 0, 0, 0.4),
+          inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+        overflow: hidden;
+      }
+      .phone::before {
+        content: '';
+        position: absolute;
+        top: 15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 15px;
+        background: #222;
+        border-radius: 10px;
+        z-index: 10;
+      }
+      .screen {
+        width: calc(100% - 16px);
+        height: calc(100% - 22px);
+        background-color: #0f172a;
+        border-radius: 35px;
+        position: absolute;
+        top: 11px;
+        left: 8px;
+        overflow: hidden;
+        box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+      }
+      .video-player {
+        height: 180px;
+        background: #000;
+        flex-shrink: 0;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+       .video-player-title {
+        color: white;
+        font-size: 1.2rem;
+        font-weight: 600;
+        text-align: center;
+        padding: 0 20px;
+       }
+      .recommendations-list {
+          padding: 10px;
+          overflow-y: auto;
+      }
+      .recommendation-item {
+          display: flex;
+          margin-bottom: 10px;
+      }
+      .thumbnail {
+          width: 120px;
+          height: 70px;
+          background: #334155;
+          border-radius: 8px;
+          flex-shrink: 0;
+      }
+      .video-info {
+          margin-left: 10px;
+      }
+      .title-placeholder {
+          height: 14px;
+          width: 120px;
+          background: #475569;
+          border-radius: 4px;
+          margin-bottom: 8px;
+      }
+      .channel-placeholder {
+          height: 10px;
+          width: 80px;
+          background: #64748b;
+          border-radius: 4px;
+      }
+      .autoplay-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0,0,0,0.8);
+        color: white;
+        padding: 10px;
+        text-align: center;
+        z-index: 20;
+      }
+      .countdown-bar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 4px;
+        background: hsl(var(--primary));
+      }
+    `}</style>
+    <div className="min-h-screen w-full flex items-center justify-center p-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full max-w-6xl">
+        <div className="flex items-center justify-center">
+            <div ref={phoneContainerRef} className="phone-container">
+                <div className="phone">
+                    <div className="screen">
+                        <div ref={videoPlayerRef} className="video-player">
+                            <div className="video-player-title">{videoTitles[0]}</div>
+                             <div ref={nextVideoOverlayRef} className="autoplay-overlay">
+                                <p className="text-sm">Up next</p>
+                                <p className="font-bold text-md">{videoTitles[1]}</p>
+                                <div ref={countdownBarRef} className="countdown-bar"></div>
+                            </div>
+                        </div>
+                        <div ref={recommendationsRef} className="recommendations-list">
+                            {videoTitles.slice(1).map(title => (
+                                <div key={title} className="recommendation-item">
+                                    <div className="thumbnail"></div>
+                                    <div className="video-info">
+                                        <div className="title-placeholder" style={{width: `${60 + Math.random() * 30}%`}}></div>
+                                        <div className="channel-placeholder" style={{width: `${40 + Math.random() * 20}%`}}></div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+         <div className="text-white">
+            <h2 className="text-4xl font-bold mb-4 text-primary">The Endless Scroll</h2>
+            <p className="text-lg text-slate-300">
+              Autoplay and recommendation algorithms are designed to keep you engaged, seamlessly transitioning from one video to the next. This animation illustrates the "Up Next" feature, a powerful tool that often decides what you watch next, creating an endless stream of content. It's a frictionless experience that can make it hard to look away.
+            </p>
+        </div>
+      </div>
+    </div>
+    </>
+  );
+}
+

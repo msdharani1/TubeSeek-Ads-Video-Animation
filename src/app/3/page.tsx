@@ -210,24 +210,34 @@ export default function AdPage() {
         border-radius: 2px;
       }
     `}</style>
-    <div className="min-h-screen w-full flex items-center justify-center">
-      <div ref={phoneContainerRef} className="phone-container">
-        <div className="phone">
-          <div className="screen">
-            <div ref={videoPlayerRef} className="video-player-background">
-               <div ref={adOverlayRef} className="ad-overlay-container">
-                <div className="ad-controls">
-                    <div ref={skipButtonRef} className="ad-button">Skip Ad</div>
-                    <div className="ad-timer">Ad ends in <span ref={adTimerRef}>5</span>s</div>
+    <div className="min-h-screen w-full flex items-center justify-center p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full max-w-6xl">
+            <div className="flex items-center justify-center">
+                <div ref={phoneContainerRef} className="phone-container">
+                    <div className="phone">
+                    <div className="screen">
+                        <div ref={videoPlayerRef} className="video-player-background">
+                        <div ref={adOverlayRef} className="ad-overlay-container">
+                            <div className="ad-controls">
+                                <div ref={skipButtonRef} className="ad-button">Skip Ad</div>
+                                <div className="ad-timer">Ad ends in <span ref={adTimerRef}>5</span>s</div>
+                            </div>
+                            <div className="ad-progress-bar-container">
+                            <div ref={adProgressBarRef} className="ad-progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
-                <div className="ad-progress-bar-container">
-                  <div ref={adProgressBarRef} className="ad-progress-bar-fill"></div>
-                </div>
-              </div>
             </div>
-          </div>
+            <div className="text-white">
+                <h2 className="text-4xl font-bold mb-4 text-primary">Unskippable Interruptions</h2>
+                <p className="text-lg text-slate-300">
+                    The viewing experience is often fragmented by advertisements. This animation shows a common scenario where an unskippable ad plays before the content. While ads support creators, their implementation can sometimes feel intrusive, breaking the immersion and testing the viewer's patience, especially when a countdown is the only thing standing between you and your video.
+                </p>
+            </div>
         </div>
-      </div>
     </div>
     </>
   );
