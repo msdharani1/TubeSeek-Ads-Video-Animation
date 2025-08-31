@@ -243,9 +243,6 @@ export default function AutoplayPage() {
         </div>
          <div ref={textContentRef} className="text-white">
             <h2 className="text-4xl font-bold mb-4 text-primary uppercase">AUTO PLAY AND RECOMMENDATIONS</h2>
-            <p className="text-lg text-slate-300">
-             This animation illustrates the "Up Next" feature, a powerful tool that often decides what you watch next, creating an endless stream of content.
-            </p>
         </div>
       </div>
     </div>

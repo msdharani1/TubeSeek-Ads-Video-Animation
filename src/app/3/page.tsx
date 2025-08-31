@@ -243,9 +243,6 @@ export default function AdPage() {
             </div>
             <div ref={textContentRef} className="text-white">
                 <h2 className="text-4xl font-bold mb-4 text-primary uppercase">ENDLESS ADS</h2>
-                <p className="text-lg text-slate-300">
-                    This animation shows a common scenario where an unskippable ad plays before the content, fragmenting the viewing experience.
-                </p>
             </div>
         </div>
     </div>
