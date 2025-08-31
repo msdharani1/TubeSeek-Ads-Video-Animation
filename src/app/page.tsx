@@ -21,8 +21,8 @@ export default function Home() {
       <main className="h-full w-full">
         <Scene />
       </main>
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 p-8 bg-gray-100/90 rounded-lg animate-pulse-glow shadow-2xl">
-        <p className="text-5xl text-gray-800 text-center font-display">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 p-8">
+        <p className="text-5xl text-center font-bold text-primary-foreground/90">
           "These days YouTube can feel overwhelming"
         </p>
       </div>
