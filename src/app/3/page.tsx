@@ -11,6 +11,8 @@ export default function AdPage() {
   const adProgressBarRef = useRef<HTMLDivElement>(null);
   const adTimerRef = useRef<HTMLSpanElement>(null);
   const skipButtonRef = useRef<HTMLDivElement>(null);
+  const textContentRef = useRef<HTMLDivElement>(null);
+
 
   useEffect(() => {
     const tl = gsap.timeline({ 
@@ -34,6 +36,8 @@ export default function AdPage() {
     if (adTimerRef.current) {
       adTimerRef.current.innerText = "5";
     }
+    gsap.set(textContentRef.current, { opacity: 0, x: 100 });
+
 
     // Animation sequence
     tl.to(phoneContainerRef.current, {
@@ -44,6 +48,12 @@ export default function AdPage() {
       duration: 1.2,
       ease: 'back.out(1.7)',
     })
+    .to(textContentRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power3.out'
+    }, "-=0.8")
     .to(videoPlayerRef.current, {
       opacity: 1,
       duration: 0.5,
@@ -231,8 +241,8 @@ export default function AdPage() {
                     </div>
                 </div>
             </div>
-            <div className="text-white">
-                <h2 className="text-4xl font-bold mb-4 text-primary">Unskippable Interruptions</h2>
+            <div ref={textContentRef} className="text-white">
+                <h2 className="text-4xl font-bold mb-4 text-primary uppercase">Endless Ads</h2>
                 <p className="text-lg text-slate-300">
                     The viewing experience is often fragmented by advertisements. This animation shows a common scenario where an unskippable ad plays before the content. While ads support creators, their implementation can sometimes feel intrusive, breaking the immersion and testing the viewer's patience, especially when a countdown is the only thing standing between you and your video.
                 </p>

@@ -3,6 +3,10 @@
 
 import { useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
+import { TextPlugin } from 'gsap/TextPlugin';
+
+gsap.registerPlugin(TextPlugin);
+
 
 export default function AutoplayPage() {
   const phoneContainerRef = useRef<HTMLDivElement>(null);
@@ -10,6 +14,7 @@ export default function AutoplayPage() {
   const recommendationsRef = useRef<HTMLDivElement>(null);
   const nextVideoOverlayRef = useRef<HTMLDivElement>(null);
   const countdownBarRef = useRef<HTMLDivElement>(null);
+  const textContentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const tl = gsap.timeline({ repeat: -1, repeatDelay: 2 });
@@ -27,6 +32,7 @@ export default function AutoplayPage() {
     gsap.set(recommendationsRef.current, { opacity: 0 });
     gsap.set(nextVideoOverlayRef.current, { opacity: 0, y: 20 });
     gsap.set(countdownBarRef.current, { width: '0%' });
+    gsap.set(textContentRef.current, { opacity: 0, x: 100 });
 
     // Animation sequence
     tl.to(phoneContainerRef.current, {
@@ -37,6 +43,12 @@ export default function AutoplayPage() {
       duration: 1.2,
       ease: 'back.out(1.7)',
     })
+    .to(textContentRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power3.out'
+    }, "-=0.8")
     .to([videoPlayerRef.current, recommendationsRef.current], {
       opacity: 1,
       duration: 0.5,
@@ -61,7 +73,8 @@ export default function AutoplayPage() {
         scrambleText: {
             text: videoTitles[1],
             chars: "abcdefghijklmnopqrstuvwxyz",
-            revealDelay: 0.5
+            revealDelay: 0.5,
+            speed: 0.3
         }
     })
     .to(phoneContainerRef.current, {
@@ -228,8 +241,8 @@ export default function AutoplayPage() {
                 </div>
             </div>
         </div>
-         <div className="text-white">
-            <h2 className="text-4xl font-bold mb-4 text-primary">The Endless Scroll</h2>
+         <div ref={textContentRef} className="text-white">
+            <h2 className="text-4xl font-bold mb-4 text-primary uppercase">Auto Play and Recommendations</h2>
             <p className="text-lg text-slate-300">
               Autoplay and recommendation algorithms are designed to keep you engaged, seamlessly transitioning from one video to the next. This animation illustrates the "Up Next" feature, a powerful tool that often decides what you watch next, creating an endless stream of content. It's a frictionless experience that can make it hard to look away.
             </p>
@@ -239,4 +252,3 @@ export default function AutoplayPage() {
     </>
   );
 }
-
