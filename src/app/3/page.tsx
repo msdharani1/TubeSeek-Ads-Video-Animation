@@ -115,9 +115,14 @@ export default function AdPage() {
   return (
     <>
     <style jsx global>{`
+      :root {
+          --bg-color: #020817;
+          --logo-primary: #e74c3c;
+          --logo-secondary: #c0392b;
+      }
       body {
         font-family: 'Inter', sans-serif;
-        background: linear-gradient(135deg, #020817 0%, #0f172a 100%);
+        background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
       }
       .phone-container {
         perspective: 1000px;
@@ -219,7 +224,36 @@ export default function AdPage() {
         box-shadow: 0 0 8px #fbbd23;
         border-radius: 2px;
       }
+       @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            100% { transform: translateY(0px) rotate(360deg); }
+        }
+
+        .floating-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: linear-gradient(45deg, var(--logo-primary), var(--logo-secondary));
+            border-radius: 50%;
+            opacity: 0.6;
+        }
     `}</style>
+      <div className="floating-elements">
+        <div className="floating-element" style={{ top: '10%', left: '20%', animation: 'float 8s ease-in-out infinite' }}></div>
+        <div className="floating-element" style={{ top: '70%', right: '15%', animation: 'float 12s ease-in-out infinite reverse' }}></div>
+        <div className="floating-element" style={{ top: '30%', right: '30%', animation: 'float 10s ease-in-out infinite' }}></div>
+      </div>
     <div className="min-h-screen w-full flex items-center justify-center p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full max-w-6xl">
             <div className="flex items-center justify-center">
