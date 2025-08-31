@@ -155,6 +155,7 @@ export default function AutoplayPage() {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
       }
        .video-player-title {
         color: white;
@@ -256,7 +257,7 @@ export default function AutoplayPage() {
                 <div className="phone">
                     <div className="screen">
                         <div ref={videoPlayerRef} className="video-player">
-                            <div className="video-player-title">{videoTitles[0]}</div>
+                            <img src="https://www.canity.com/wp-content/uploads/2017/01/Micro-learning-for-Millennial-Minds.gif" alt="Autoplaying video" className="w-full h-full object-cover" />
                              <div ref={nextVideoOverlayRef} className="autoplay-overlay">
                                 <p className="text-sm">Up next</p>
                                 <p className="font-bold text-md">{videoTitles[1]}</p>

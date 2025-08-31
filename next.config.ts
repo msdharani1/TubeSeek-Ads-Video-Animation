@@ -33,6 +33,12 @@ const nextConfig: NextConfig = {
         hostname: 'img.youtube.com',
         port: '',
         pathname: '/vi/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'www.canity.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
