@@ -200,7 +200,7 @@ export default function AdAnimationPage() {
             left: 10px;
             width: calc(100% - 20px);
             opacity: 0;
-            z-index: 10;
+            z-index: 9999;
         }
         .ad-text {
             background: var(--ad-yellow);
