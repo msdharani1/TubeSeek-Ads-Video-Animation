@@ -196,9 +196,9 @@ export default function AdAnimationPage() {
         
         .ad-overlay {
             position: absolute;
-            bottom: 20px; /* Position above recommendations */
-            left: 10%;
-            width: 80%;
+            bottom: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
             opacity: 0;
             z-index: 10;
         }
@@ -230,6 +230,11 @@ export default function AdAnimationPage() {
             padding: 15px;
             overflow-y: auto;
             flex-grow: 1;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .recommendations::-webkit-scrollbar {
+            display: none;
         }
 
         .video-item {
@@ -287,5 +292,3 @@ export default function AdAnimationPage() {
     </>
   );
 }
-
-    
