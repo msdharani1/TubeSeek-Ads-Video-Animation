@@ -4,34 +4,29 @@ import React, { FC, useEffect, useState } from "react";
 import { Play } from "lucide-react";
 
 const thumbnails = [
-  { width: 320, height: 180, hint: "nature" },
-  { width: 240, height: 135, hint: "city" },
-  { width: 400, height: 225, hint: "space" },
-  { width: 280, height: 158, hint: "food" },
-  { width: 360, height: 203, hint: "animals" },
-  { width: 300, height: 169, hint: "sports" },
-  { width: 340, height: 191, hint: "music" },
-  { width: 260, height: 146, hint: "gaming" },
-  { width: 380, height: 214, hint: "fashion" },
-  { width: 220, height: 124, hint: "travel" },
-  { width: 320, height: 180, hint: "tech" },
-  { width: 240, height: 135, hint: "science" },
-  { width: 400, height: 225, hint: "history" },
-  { width: 280, height: 158, hint: "art" },
-  { width: 360, height: 203, hint: "comedy" },
-  { width: 320, height: 180, hint: "vlog" },
-  { width: 240, height: 135, hint: "diy" },
-  { width: 400, height: 225, hint: "education" },
-  { width: 280, height: 158, hint: "documentary" },
-  { width: 360, height: 203, hint: "unbox" },
-];
+  "XqZsoesa55w", "kJQP7kiw5Fk", "JGwWNGJdvx8", "RgKAFK5djSk", "OPf0YbXqDm0",
+  "9bZkp7q19f0", "ekr2nIex040", "kPa7bsKwL-c", "DyDfgMOUjCI", "4NRXx6U8ABQ",
+  "Pkh8UtuejGw", "b1kbLWvqugk", "H5v3kku4y6Q", "UTHLKHL_whs", "G7KNmW9a75Y",
+  "mVKuCbjFfIY", "KqFNbCcyFkk", "ck4RGeoHFko", "2W_VnvjeWK4", "OUS9mM8Xbbw",
+  "xuCn8ux2gbs", "jHbyQ_AQP8c", "1lm1RzxI7vY", "tR7fDH5hdlY", "3WPsaWAKh8c",
+  "QiWMnF3n03Y", "8t4L-vm8cKo", "EB-C9J_DdEA", "M6t47RI4bns", "Sje_626T4bA",
+  "dQw4w9WgXcQ", "XHTrLYShBRQ", "LXb3EKWsInQ", "rib47coDWm8", "Ok4BqC5TO_c",
+  "Pt-W2JHnqac", "gDjMZvYWUdo", "K0-GxoJ_Pcg", "GoW8Tf7hTGA", "hOfRN0KihOU",
+  "e-P5IFTqB98", "QRt7LjqJ45k", "4lAGzNNELfE", "5xRiJICmF0U", "ysw0Slf9nj8",
+  "kBu9nAOlRRE", "JfVOs4VSpmA", "TcMBFSGVi1c", "g4U4BQW9OEk", "mqqft2x_Aa4"
+].map(id => ({
+  id,
+  width: 320 + Math.floor(Math.random() * 80) - 40,
+  height: 180 + Math.floor(Math.random() * 45) - 22,
+}));
+
 
 const VideoThumbnail: FC<{
+  videoId: string;
   width: number;
   height: number;
-  hint: string;
   className?: string;
-}> = ({ width, height, hint, className }) => {
+}> = ({ videoId, width, height, className }) => {
   return (
     <div
       className={`group relative cursor-pointer overflow-hidden rounded-md bg-card shadow-lg ${className}`}
@@ -41,8 +36,7 @@ const VideoThumbnail: FC<{
       }}
     >
       <img
-        src={`https://picsum.photos/${width}/${height}`}
-        data-ai-hint={hint}
+        src={`https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`}
         alt="Video thumbnail"
         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
       />
@@ -98,7 +92,7 @@ export default function Scene() {
       <div className="absolute inset-0 z-0">
         {Array.from({ length: numThumbnails }).map((_, i) => (
           <FloatingElement key={`thumb-${i}`} index={i}>
-            <VideoThumbnail {...thumbnails[i % thumbnails.length]} />
+            <VideoThumbnail videoId={thumbnails[i % thumbnails.length].id} width={thumbnails[i % thumbnails.length].width} height={thumbnails[i % thumbnails.length].height} />
           </FloatingElement>
         ))}
       </div>
