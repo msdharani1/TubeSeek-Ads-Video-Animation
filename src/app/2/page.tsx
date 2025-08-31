@@ -8,7 +8,9 @@ import { TextPlugin } from 'gsap/TextPlugin';
 gsap.registerPlugin(TextPlugin);
 
 export default function EnhancedAnimationPage() {
+  const containerRef = useRef<HTMLDivElement>(null);
   const phoneContainerRef = useRef<HTMLDivElement>(null);
+  const textContentRef = useRef<HTMLDivElement>(null);
   const screenRef = useRef<HTMLDivElement>(null);
   const tubeseekLogoRef = useRef<HTMLDivElement>(null);
   const appScreenRef = useRef<HTMLDivElement>(null);
@@ -18,199 +20,158 @@ export default function EnhancedAnimationPage() {
   const resultsListRef = useRef<HTMLDivElement>(null);
   const videoPlayerRef = useRef<HTMLDivElement>(null);
   const playerTitleRef = useRef<HTMLHeadingElement>(null);
-  const videoProgressRef = useRef<HTMLDivElement>(null);
+  const adOverlayRef = useRef<HTMLDivElement>(null);
   const shortsViewRef = useRef<HTMLDivElement>(null);
   const shortsReelRef = useRef<HTMLDivElement>(null);
-  const adOverlayRef = useRef<HTMLDivElement>(null);
-
-  const animationRunning = useRef(false);
 
   const videoTitles = [
-    "React Hooks Explained in 10 Minutes",
-    "Beginner's Guide to React Components",
-    "State Management with Redux Toolkit",
-    "Building a Portfolio Website with React"
+    "React Hooks Explained",
+    "Beginner's Guide to React",
+    "State Management in React",
+    "Building a Portfolio with React"
   ];
 
-  const shortsTitles = [
-    "Funny Cat Fails Compilation",
-    "Cooking with a Toddler",
-    "Epic Gaming Moments",
-    "Unbelievable Magic Tricks",
-    "My Dog's Life as a King"
+  const shortsContent = [
+    { title: "Funny Cat Fails", gif: "https://i.pinimg.com/originals/67/f1/2e/67f12e0d73e01e1c52eda42916e9769a.gif" },
+    { title: "Cooking with a Toddler", gif: "https://media.tenor.com/N9KXo0VYOq0AAAAM/sunnyfication.gif" },
+    { title: "Epic Gaming Moments", gif: "https://cdn.mos.cms.futurecdn.net/c7430b83771cb95dd5a6c49d593b4ec5.gif" },
+    { title: "Unbelievable Magic", gif: "https://i.makeagif.com/media/8-25-2015/oVBRNE.gif" },
+    { title: "My Dog's Life as a King", gif: "https://i.pinimg.com/originals/67/f1/2e/67f12e0d73e01e1c52eda42916e9769a.gif" }
   ];
 
-  const createVideoItem = (title: string, index: number) => {
+  const createVideoItem = (title: string) => {
     const item = document.createElement('div');
     item.className = 'video-item';
-    item.setAttribute('data-index', String(index));
     item.innerHTML = `
         <div class="video-thumbnail"></div>
         <div class="video-info">
-            <div class="video-title"></div>
+            <span class="text-sm text-gray-300 font-medium">${title}</span>
             <div class="channel-name"></div>
-            <span class="text-sm text-gray-300 mt-2 block font-medium">${title}</span>
         </div>
     `;
     return item;
   };
 
-  const createShortItem = (title: string, index: number) => {
+  const createShortItem = (title: string, gifUrl: string, index: number) => {
     const item = document.createElement('div');
     item.className = 'short-item';
-    item.style.background = `linear-gradient(${135 + index * 30}deg, var(--logo-primary), var(--logo-secondary))`;
     item.innerHTML = `
+        <img src="${gifUrl}" alt="${title}" class="short-gif" />
         <div class="short-item-info">
             <h4>${title}</h4>
-            <p class="text-sm mt-2 opacity-80">@FunnyTube</p>
-            <p class="text-xs mt-1 opacity-60">${Math.floor(Math.random() * 900 + 100)}K views</p>
+            <p class="text-sm mt-2 opacity-80">@User${index + 1}</p>
         </div>
     `;
     return item;
   };
+  
+  useEffect(() => {
+    if (typeof window === "undefined") return;
 
-  const resetAnimation = () => {
-    gsap.set([videoPlayerRef.current, shortsViewRef.current, adOverlayRef.current], { opacity: 0, scaleY: 0, y: 0 });
+    const tl = gsap.timeline({ repeat: -1, repeatDelay: 3 });
+
+    // Initial setup
+    gsap.set(phoneContainerRef.current, { opacity: 0, scale: 0.8, y: 100, rotationY: -45 });
+    gsap.set(textContentRef.current, { opacity: 0, x: 100 });
+    gsap.set(screenRef.current, { backgroundColor: 'var(--screen-off)' });
+    gsap.set(tubeseekLogoRef.current, { opacity: 0, scale: 0.8 });
+    gsap.set(appScreenRef.current, { opacity: 0 });
+    gsap.set(searchBarRef.current, { opacity: 0, y: 20 });
     gsap.set(resultsListRef.current, { opacity: 0 });
-    phoneContainerRef.current?.classList.remove('active');
-    screenRef.current?.classList.remove('on');
-    appScreenRef.current?.classList.remove('active');
-    if (shortsReelRef.current) shortsReelRef.current.innerHTML = '';
-    if (resultsListRef.current) resultsListRef.current.innerHTML = '';
-    animationRunning.current = false;
-  };
+    gsap.set(videoPlayerRef.current, { opacity: 0, scaleY: 0 });
+    gsap.set(shortsViewRef.current, { opacity: 0, y: '100%' });
+    gsap.set(adOverlayRef.current, { opacity: 0 });
 
-  const playAnimation = () => {
-    if (animationRunning.current) return;
-    animationRunning.current = true;
-
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setTimeout(resetAnimation, 2000);
-      }
-    });
-
-    tl.set(phoneContainerRef.current, { rotationY: -30, scale: 0.7 });
     tl.to(phoneContainerRef.current, {
       opacity: 1,
       scale: 1,
+      y: 0,
       rotationY: 0,
-      duration: 1,
-      ease: "back.out(1.7)"
-    }, 0.2);
+      duration: 1.2,
+      ease: 'back.out(1.7)',
+    })
+    .to(textContentRef.current, {
+        opacity: 1,
+        x: 0,
+        duration: 1,
+        ease: 'power3.out'
+    }, "-=0.8")
+    .to(screenRef.current, { backgroundColor: 'var(--screen-on)', duration: 0.5 }, ">-0.5")
+    .to(tubeseekLogoRef.current, { opacity: 1, scale: 1, duration: 0.5 }, ">")
+    .to(tubeseekLogoRef.current, { opacity: 0, scale: 0.8, duration: 0.3 }, ">1")
+    
+    // App screen appears
+    .to(appScreenRef.current, { opacity: 1, duration: 0.4 }, "<")
+    .to(searchBarRef.current, { opacity: 1, y: 0, duration: 0.4 }, "<0.2")
 
-    tl.to(screenRef.current, {
-      backgroundColor: 'var(--screen-on)',
-      duration: 0.5,
-      ease: "power2.inOut"
-    }, ">-0.3");
+    // Typing animation
+    .to(cursorRef.current, { opacity: 1, duration: 0.1 }, ">")
+    .to(searchTextRef.current, { duration: 1.5, text: "react js tutorial", ease: "none" })
+    .to(cursorRef.current, { opacity: 0, duration: 0.2 }, ">0.3")
 
-    tl.to(tubeseekLogoRef.current, {
-      opacity: 1,
-      scale: 1.3,
-      rotation: 360,
-      duration: 0.5,
-      ease: "back.out(1.7)"
-    }, ">");
+    // Show results
+    .to(searchBarRef.current, { y: -10, opacity: 0.7, duration: 0.3 }, ">")
+    .to(resultsListRef.current, { opacity: 1 }, "<")
+    
+    // Populate results
+    .call(() => {
+        if (!resultsListRef.current) return;
+        resultsListRef.current.innerHTML = ''; // Clear previous results
+        videoTitles.forEach((title) => {
+            const item = createVideoItem(title);
+            resultsListRef.current?.appendChild(item);
+            gsap.from(item, { opacity: 0, y: 20, duration: 0.3, stagger: 0.1 });
+        });
+    })
 
-    tl.to(tubeseekLogoRef.current, {
-      scale: 1.1,
-      duration: 0.2,
-      yoyo: true,
-      repeat: 1
-    }, ">0.2");
+    // Select a video
+    .to(resultsListRef.current?.children[3] || {}, { scale: 1.05, duration: 0.3, ease: "power2.out" }, ">1")
 
-    tl.to(tubeseekLogoRef.current, { opacity: 0, scale: 0.8, duration: 0.3 }, ">");
-    tl.to(appScreenRef.current, { opacity: 1, duration: 0.4 }, "<0.1");
-    tl.to(searchBarRef.current, { opacity: 1, y: 0, duration: 0.4 }, "<0.2");
-
-    tl.to(cursorRef.current, { opacity: 1, duration: 0.1 }, ">");
-    const query = "React js tutorial";
-    tl.to(searchTextRef.current, {
-      duration: query.length * 0.05,
-      text: query,
-      ease: "none"
-    });
-    tl.to(cursorRef.current, { opacity: 0, duration: 0.2 }, ">0.3");
-
-    tl.to(searchBarRef.current, { y: -10, opacity: 0.7, duration: 0.3 }, ">");
-
-    videoTitles.forEach((title, index) => {
-      const item = createVideoItem(title, index);
-      resultsListRef.current?.appendChild(item);
-      tl.fromTo(item,
-        { opacity: 0, y: 30, scale: 0.95 },
-        {
-          opacity: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.3,
-          ease: "back.out(1.7)"
-        },
-        ">-0.15"
-      );
-    });
-
-    const fourthVideo = resultsListRef.current?.children[3];
-    if (fourthVideo) {
-        tl.to(fourthVideo, {
-            scale: 1.05,
-            duration: 0.3,
-            ease: "power2.out",
-            onStart: () => fourthVideo.classList.add('selected')
-        }, ">1");
-        tl.to(fourthVideo, {
-            scale: 1.02,
-            duration: 0.2
-        }, ">");
-    }
-
-    tl.to(resultsListRef.current, { opacity: 0, y: -20, duration: 0.4 }, ">0.1");
-    tl.to(videoPlayerRef.current, {
+    // Hide results, show video player
+    .to(resultsListRef.current, { opacity: 0, y: -20, duration: 0.4 }, ">0.5")
+    .to(videoPlayerRef.current, {
       scaleY: 1,
       opacity: 1,
       duration: 0.4,
       ease: "power2.inOut",
       onStart: () => {
         if (playerTitleRef.current) playerTitleRef.current.textContent = videoTitles[3];
-        gsap.set(videoProgressRef.current, { width: '0%' });
       }
-    }, "<");
+    }, "<")
 
-    tl.to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.1");
-    tl.fromTo('.ad-progress-bar-fill', { width: '0%' }, { 
-      width: '100%', 
-      duration: 2, 
-      ease: 'linear'
-    });
-    tl.to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">");
+    // Ad overlay
+    .to(adOverlayRef.current, { opacity: 1, duration: 0.2 }, ">0.5")
+    .fromTo(adOverlayRef.current?.querySelector('.ad-progress-bar-fill'), { width: '0%' }, { width: '100%', duration: 2, ease: 'linear' })
+    .to(adOverlayRef.current, { opacity: 0, duration: 0.2 }, ">")
 
-    tl.to(videoProgressRef.current, { width: '80%', duration: 3, ease: "power1.inOut" });
-
-
-    tl.to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2");
-    tl.to(shortsViewRef.current, { opacity: 1, duration: 0.4 }, "<0.1");
+    // Hide video, show shorts
+    .to(videoPlayerRef.current, { scaleY: 0, opacity: 0, duration: 0.4, ease: "power2.in" }, ">2")
+    .to(shortsViewRef.current, { opacity: 1, y: '0%', duration: 0.4 }, "<")
     
-    const numShorts = 5;
-    let currentShortIndex = 0;
-    for (let i = 0; i < numShorts; i++) {
-        const short = createShortItem(shortsTitles[i % shortsTitles.length], i);
-        shortsReelRef.current?.appendChild(short);
-        tl.fromTo(short, 
-            { y: "100%", opacity: 0 }, 
-            { y: "0%", opacity: 1, duration: 0.4, ease: "power2.inOut", onComplete: () => {
-                if (currentShortIndex > 0 && shortsReelRef.current) {
-                    gsap.to(shortsReelRef.current.children[currentShortIndex - 1], { y: "-100%", opacity: 0, duration: 0.4, ease: "power2.inOut" });
-                }
-                currentShortIndex++;
-            }}, 
-        `+=${i === 0 ? 0 : 1}`);
-    }
-  };
+    // Populate and scroll shorts
+     .call(() => {
+        if (!shortsReelRef.current) return;
+        shortsReelRef.current.innerHTML = '';
+        shortsContent.forEach((short, index) => {
+             const item = createShortItem(short.title, short.gif, index);
+             shortsReelRef.current?.appendChild(item);
+        });
+    })
+    .to(shortsReelRef.current, { y: `-${4 * 100}%`, duration: 5, ease: "power1.inOut" })
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      playAnimation();
+    // Reset for next loop
+    .to(containerRef.current, {
+        opacity: 0,
+        scale: 0.8,
+        y: 100,
+        rotationY: 45,
+        duration: 1,
+        ease: 'power3.in'
+    }, ">2");
+
+
+    return () => {
+        tl.kill();
     }
   }, []);
 
@@ -224,53 +185,25 @@ export default function EnhancedAnimationPage() {
             --screen-on: #f0f8ff;
             --logo-primary: #e74c3c;
             --logo-secondary: #c0392b;
-            --app-bg: #020817;
-            --app-text: #f0f8ff;
-            --overwhelmed-color: #c0392b;
-            --hand-color: #fbbf24;
+            --app-bg: #0f172a;
+            --app-text: #e2e8f0;
             --ad-yellow: #fbbd23;
         }
-
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, var(--bg-color) 0%, #0f172a 50%, var(--bg-color) 100%);
-            display: flex;
-            justify-content: center;
-            align-items: flex-end; 
-            min-height: 100vh;
-            overflow: hidden;
-            transition: all 1.5s ease-in-out;
-            position: relative;
-            margin: 0;
-            padding: 0;
         }
-
-        .phone-container {
-            transform: scale(0.7);
-            opacity: 0;
-            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            z-index: 20;
-            filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.5));
-            margin-bottom: 120px; 
-        }
-        .phone-container.active {
-            transform: scale(1);
-            opacity: 1;
-        }
-
+        .phone-container { perspective: 1000px; }
         .phone {
             width: 300px;
             height: 600px;
             background: linear-gradient(145deg, #1a1a1a, var(--phone-color));
             border-radius: 40px;
             border: 3px solid #333;
-            box-shadow: 
-                0 30px 60px -12px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            box-shadow: 0 30px 60px -12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
             position: relative;
             overflow: hidden;
         }
-
         .phone::before {
             content: '';
             position: absolute;
@@ -283,7 +216,6 @@ export default function EnhancedAnimationPage() {
             border-radius: 10px;
             z-index: 10;
         }
-
         .screen {
             width: calc(100% - 16px);
             height: calc(100% - 22px);
@@ -293,17 +225,8 @@ export default function EnhancedAnimationPage() {
             top: 11px;
             left: 8px;
             overflow: hidden;
-            transition: all 0.8s ease-in;
-            box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.3);
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.3);
         }
-
-        .screen.on {
-            background-color: var(--screen-on);
-            box-shadow: 
-                inset 0 0 30px rgba(0, 0, 0, 0.1),
-                0 0 50px rgba(138, 43, 226, 0.3);
-        }
-
         .app-icon {
             width: 90px;
             height: 90px;
@@ -311,9 +234,7 @@ export default function EnhancedAnimationPage() {
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%) scale(0.8);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             opacity: 0;
-            cursor: pointer;
             background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
             border-radius: 22px;
             display: flex;
@@ -321,231 +242,109 @@ export default function EnhancedAnimationPage() {
             justify-content: center;
             box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
         }
-
-        .app-icon.active {
-            opacity: 1;
-            transform: translate(-50%, -50%) scale(1);
-        }
-
         .app-icon::after {
             content: '▶';
             color: white;
             font-size: 36px;
-            font-weight: bold;
         }
-
         .app-screen {
-            background: linear-gradient(180deg, var(--app-bg) 0%, #0f172a 100%);
+            background: var(--app-bg);
             opacity: 0;
-            transition: opacity 0.6s ease;
             width: 100%;
             height: 100%;
             display: flex;
             flex-direction: column;
             position: relative;
+            overflow: hidden;
         }
-        .app-screen.active {
-            opacity: 1;
-        }
-
         .search-bar {
-            width: calc(100% - 40px);
-            margin: 25px auto 15px;
-            padding: 12px 16px;
-            background: linear-gradient(145deg, #1a1a1a, #2a2a2a);
-            border-radius: 25px;
-            color: #e2e8f0;
+            width: calc(100% - 30px);
+            margin: 20px auto 10px;
+            padding: 10px 14px;
+            background: #1e293b;
+            border-radius: 20px;
+            color: var(--app-text);
             display: flex;
             align-items: center;
-            font-size: 15px;
-            opacity: 0;
+            font-size: 14px;
             border: 1px solid #374151;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
         .search-bar::before {
             content: '🔍';
-            margin-right: 10px;
-            font-size: 18px;
-            filter: grayscale(0.3);
+            margin-right: 8px;
+            font-size: 16px;
         }
-        .search-text {
-            white-space: nowrap;
-            overflow: hidden;
-            width: auto;
-            transition: width 0.8s ease;
-            font-weight: 400;
+        .results-list {
+          padding: 0 10px;
+          overflow-y: auto;
         }
-
         .video-item {
-            width: calc(100% - 30px);
-            background: linear-gradient(145deg, #1e293b, #334155);
-            border-radius: 16px;
-            margin: 10px auto;
+            width: 100%;
+            background: #1e293b;
+            border-radius: 12px;
+            margin: 8px 0;
             display: flex;
             align-items: center;
-            padding: 12px;
-            position: relative;
-            opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            padding: 10px;
             border: 1px solid #475569;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
         }
-
-        .video-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(138, 43, 226, 0.2);
-        }
-
         .video-thumbnail {
-            width: 110px;
-            height: 65px;
+            width: 100px;
+            height: 56px;
             background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
-            border-radius: 12px;
+            border-radius: 8px;
             flex-shrink: 0;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(138, 43, 226, 0.2);
         }
-        .video-thumbnail::before {
-            content: '▶';
-            color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .video-info {
             flex-grow: 1;
-            margin-left: 15px;
+            margin-left: 12px;
         }
-
-        .video-title {
-            height: 14px;
-            background: linear-gradient(90deg, #e2e8f0, #cbd5e1);
-            border-radius: 7px;
-            margin-bottom: 8px;
-            width: 95%;
-        }
-
         .channel-name {
             height: 10px;
-            background: linear-gradient(90deg, #94a3b8, #64748b);
+            background: #475569;
             border-radius: 5px;
-            width: 65%;
-            margin-bottom: 6px;
+            width: 60%;
+            margin-top: 6px;
         }
-        
         .video-player {
-            width: 100%;
-            height: 60%;
-            background: linear-gradient(180deg, #000, #1a1a1a);
-            position: absolute;
-            top: 0;
-            left: 0;
-            transform: scaleY(0);
-            transform-origin: top;
-            opacity: 0;
-            transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            color: #fff;
-            padding: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-        .video-player-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #f0f8ff;
-        }
-
-        .shorts-container {
             width: 100%;
             height: 100%;
             background: #000;
-            opacity: 0;
             position: absolute;
             top: 0;
             left: 0;
+            transform-origin: top;
             display: flex;
             flex-direction: column;
-            justify-content: flex-end;
             color: #fff;
-            transition: opacity 0.6s ease-in;
-            overflow: hidden;
         }
-        .shorts-container.active {
-            opacity: 1;
+        .video-player-content {
+          width: 100%;
+          height: 180px;
+          background-size: cover;
+          background-position: center;
+          position: relative;
         }
-        .short-item {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background: linear-gradient(135deg, var(--logo-primary), var(--logo-secondary));
-            opacity: 0;
-            transform: translateY(100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            align-items: flex-start;
-            padding: 25px;
-            box-sizing: border-box;
-        }
-        .short-item-info {
-            z-index: 1;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        .short-item-info h4 {
+        .video-player-title {
+            font-size: 16px;
             font-weight: 600;
-            font-size: 18px;
-            margin-bottom: 5px;
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
         }
-
-        .progress-bar {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--logo-primary), var(--logo-secondary));
-            width: 0%;
-            transition: width 0.3s ease;
-            border-radius: 2px;
-        }
-        
         .ad-overlay {
             position: absolute;
-            bottom: 60px;
-            left: 10%;
-            width: 80%;
-            opacity: 0;
-            z-index: 10000000;
+            bottom: 10px;
+            left: 10px;
+            width: calc(100% - 20px);
         }
         .ad-text {
             background: var(--ad-yellow);
             color: #000;
             padding: 2px 6px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 500;
             display: inline-block;
             margin-bottom: 4px;
@@ -553,42 +352,69 @@ export default function EnhancedAnimationPage() {
         .ad-progress-bar {
             width: 100%;
             height: 3px;
-            background-color: rgba(255, 255, 255, 0.3);
+            background-color: rgba(255,255,255,0.3);
             border-radius: 2px;
-            overflow: hidden;
-            border: 1px solid var(--ad-yellow);
         }
         .ad-progress-bar-fill {
             width: 0%;
             height: 100%;
             background-color: var(--ad-yellow);
         }
-
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(220, 20, 60, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(220, 20, 60, 0.6); }
+        .shorts-container {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
         }
-
-        .selected {
-            animation: pulseGlow 1s ease-in-out;
-            border: 2px solid var(--logo-primary) !important;
+        .shorts-reel {
+            width: 100%;
+            height: 500%; /* 5 shorts */
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-
+        .short-item {
+            width: 100%;
+            height: 20%; /* 1/5 of the reel height */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+            padding: 20px;
+            box-sizing: border-box;
+            color: white;
+        }
+        .short-gif {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+        }
+        .short-item-info {
+            z-index: 1;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
         .typing-cursor {
             animation: blink 1s infinite;
         }
-
         @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
+            50% { opacity: 0; }
         }
-        
         @keyframes float {
             0% { transform: translateY(0px) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(180deg); }
             100% { transform: translateY(0px) rotate(360deg); }
         }
-
         .floating-elements {
             position: absolute;
             top: 0;
@@ -598,7 +424,6 @@ export default function EnhancedAnimationPage() {
             pointer-events: none;
             z-index: 5;
         }
-
         .floating-element {
             position: absolute;
             width: 6px;
@@ -613,39 +438,38 @@ export default function EnhancedAnimationPage() {
         <div className="floating-element" style={{ top: '70%', right: '15%', animation: 'float 12s ease-in-out infinite reverse' }}></div>
         <div className="floating-element" style={{ top: '30%', right: '30%', animation: 'float 10s ease-in-out infinite' }}></div>
       </div>
-      <div className="person-body" style={{display: 'none'}}>
-        <div className="person-head"></div>
-        <div className="person-torso"></div>
-      </div>
-      <div id="overwhelmed-text" className="overwhelmed-text" style={{display: 'none'}}></div>
-      <div ref={phoneContainerRef} className="phone-container">
-        <div id="phone" className="phone">
-          <div ref={screenRef} id="screen" className="screen">
-            <div ref={tubeseekLogoRef} id="tubeseek-logo" className="app-icon"></div>
-            <div ref={appScreenRef} id="app-screen" className="app-screen">
-              <div ref={searchBarRef} id="search-bar" className="search-bar">
-                <span ref={searchTextRef} id="search-text" className="search-text"></span>
-                <span ref={cursorRef} id="cursor" className="typing-cursor">|</span>
-              </div>
-              <div ref={resultsListRef} id="results-list" className="flex flex-col w-full h-full mt-2 px-2">
-              </div>
-              <div ref={videoPlayerRef} id="video-player" className="video-player">
-                <h3 ref={playerTitleRef} id="player-title" className="video-player-title"></h3>
-                <div ref={adOverlayRef} className="ad-overlay">
-                  <div className="ad-text">Skip Ad</div>
-                  <div className="ad-progress-bar">
-                      <div className="ad-progress-bar-fill"></div>
+      <div ref={containerRef} className="min-h-screen w-full flex items-center justify-center p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center w-full max-w-6xl">
+          <div className="flex items-center justify-center">
+            <div ref={phoneContainerRef} className="phone-container">
+              <div className="phone">
+                <div ref={screenRef} className="screen">
+                  <div ref={tubeseekLogoRef} className="app-icon"></div>
+                  <div ref={appScreenRef} className="app-screen">
+                    <div ref={searchBarRef} className="search-bar">
+                      <span ref={searchTextRef} className="search-text"></span>
+                      <span ref={cursorRef} className="typing-cursor">|</span>
+                    </div>
+                    <div ref={resultsListRef} className="results-list"></div>
+                    <div ref={videoPlayerRef} className="video-player">
+                       <div className="video-player-content" style={{backgroundImage: "url('https://camo.githubusercontent.com/5046cb083418fd1922b7f5990e594c3bb06f5d87e5516cd8839ae0aa48b3aec4/68747470733a2f2f696d616765732e73717561726573706163652d63646e2e636f6d2f636f6e74656e742f76312f35373639666334303162333162616231616464623261622f313534313538303231313632342d5445363451474b524a4738535741495553374e532f6b6531375a77644742546f6464493870446d34386b506f73776c7a6a53564d4d2d53784f703743563539425a772d7a505067646e346a557756634a45315a7657515578776b6d794578676c4e714770304976544a5a616d574c49327a76595748384b332d735f3479737a63703272795449304871544f6161556f68724938504936465879386339505774426c7141566c555335697a7064634958445a71445976707252715a32395077306f2f636f64696e672d667265616b2e676966')"}}>
+                         <h3 ref={playerTitleRef} className="video-player-title"></h3>
+                         <div ref={adOverlayRef} className="ad-overlay">
+                            <div className="ad-text">Ad</div>
+                            <div className="ad-progress-bar"><div className="ad-progress-bar-fill"></div></div>
+                         </div>
+                       </div>
+                    </div>
+                    <div ref={shortsViewRef} className="shorts-container">
+                      <div ref={shortsReelRef} className="shorts-reel"></div>
+                    </div>
                   </div>
-                </div>
-                <div className="progress-bar">
-                  <div ref={videoProgressRef} id="video-progress" className="progress-fill"></div>
-                </div>
-              </div>
-              <div ref={shortsViewRef} id="shorts-view" className="shorts-container">
-                <div ref={shortsReelRef} id="shorts-reel" className="relative w-full h-full">
                 </div>
               </div>
             </div>
+          </div>
+          <div ref={textContentRef} className="text-white">
+            <h2 className="text-4xl font-bold mb-4 text-primary uppercase">ENDLESS SCROLLING AND SHORT-FORM CONTENT</h2>
           </div>
         </div>
       </div>
